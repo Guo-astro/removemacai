@@ -217,6 +217,13 @@ func selfTest() -> Bool {
     program: "/Library/PrivilegedHelperTools/dev.orbstack.OrbStack.privhelper", system: true)
   check(script.owner == "sync.sh" && helper.owner == "OrbStack", "background items are named after what they run")
 
+  MainActor.assumeIsolated {
+    let model = AppModel()
+    model.modelBytes = ["first": 5]
+    check(model.modelBytes(["first"]) == 5 && model.modelBytes(["first", "second"]) == nil,
+      "the review sheet shows a model size only when every set has a reading")
+  }
+
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
 }

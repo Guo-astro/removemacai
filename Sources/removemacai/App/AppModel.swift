@@ -116,7 +116,8 @@ final class AppModel {
 
   var modelTotal: Int64 { modelBytes.values.reduce(0, +) }
 
-  func modelBytes(_ sets: [String]) -> Int64 { sets.reduce(0) { $0 + (modelBytes[$1] ?? 0) } }
+  /// The size of these sets, or nil unless every one of them has a reading.
+  func modelBytes(_ sets: [String]) -> Int64? { Models.total(sets, read: { self.modelBytes[$0] }) }
 
   func loadBackground() {
     background = BackgroundItems.scan()
