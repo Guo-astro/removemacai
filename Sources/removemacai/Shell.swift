@@ -26,10 +26,11 @@ enum Shell {
   static func quote(_ s: String) -> String { "'" + s.replacingOccurrences(of: "'", with: "'\\''") + "'" }
 
   /// Runs shell commands as root after one macOS password prompt. From a
-  /// terminal, sudo asks instead.
+  /// terminal, sudo asks instead. Every command runs even when an earlier one
+  /// fails; the result fails if any of them did.
   static func admin(_ commands: [String], prompt: String) -> Result {
     guard !commands.isEmpty else { return Result(status: 0, output: "") }
-    let script = commands.joined(separator: " && ")
+    let script = adminScript(commands)
     if getuid() == 0 { return run("/bin/sh", ["-c", script]) }
     if isatty(STDIN_FILENO) == 1 && !Shell.inApp {
       return run("/usr/bin/sudo", ["/bin/sh", "-c", script])
@@ -39,6 +40,10 @@ enum Shell {
     return run("/usr/bin/osascript", [
       "-e", "do shell script \"\(escaped)\" with prompt \"\(promptText)\" with administrator privileges",
     ])
+  }
+
+  static func adminScript(_ commands: [String]) -> String {
+    (["rc=0"] + commands.map { "( \($0) ) || rc=1" } + ["exit $rc"]).joined(separator: "; ")
   }
 
   /// A readable reason for a failed administrator step. osascript prefixes
