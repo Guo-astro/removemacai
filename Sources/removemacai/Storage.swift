@@ -38,6 +38,9 @@ enum Storage {
     ("pages", "Pages", []),
   ]
 
+  /// Apps that share GarageBand's sound library.
+  static let soundLibraryApps = ["Logic Pro", "Logic Pro X", "MainStage", "MainStage 3"]
+
   /// Finds what can go and how big it is. Slow on big caches; call it off the main thread.
   static func scan() -> [StorageItem] {
     var items: [StorageItem] = []
@@ -90,13 +93,16 @@ enum Storage {
       caveat: "Quit your apps first. Apple's own caches are left alone.",
       paths: children(home + "/Library/Caches").filter { !($0 as NSString).lastPathComponent.hasPrefix("com.apple.") }))
 
+    let sharing = soundLibraryApps.filter { FileManager.default.fileExists(atPath: "/Applications/\($0).app") }
     for app in appleApps {
       let path = "/Applications/\(app.app).app"
       guard FileManager.default.fileExists(atPath: path) else { continue }
+      let keepExtra = !app.extra.isEmpty && !sharing.isEmpty
       items.append(files(
         id: app.id, title: app.app,
         detail: "One of Apple's optional apps. It reinstalls free from the App Store.",
-        paths: [path] + app.extra.filter { FileManager.default.fileExists(atPath: $0) }))
+        caveat: keepExtra ? "Its sound library stays, because \(sharing.joined(separator: " and ")) uses it too." : nil,
+        paths: [path] + (keepExtra ? [] : app.extra.filter { FileManager.default.fileExists(atPath: $0) })))
     }
 
     var snapshots = StorageItem(
