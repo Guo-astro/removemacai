@@ -84,6 +84,7 @@ enum BackgroundItems {
   /// Switches items off or back on. Daemons share one administrator prompt.
   static func set(_ items: [BackgroundItem], disabled: Bool) -> [String] {
     var journal = Engine.loadJournal()
+    if let blocked = Engine.journalBlocked { return [blocked] }
     let labels = disabledLabels()
     var problems: [String] = []
     var adminCommands: [String] = []
