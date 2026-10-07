@@ -196,20 +196,28 @@ enum TweakCommands {
       Term.fail("\"\(id)\" is not in the list above")
     }
     let total = chosen.reduce(Int64(0)) { $0 + $1.bytes }
+    let permanent = chosen.filter(\.permanent)
+    if !permanent.isEmpty {
+      print(Term.yellow("!") + " " + permanent.map(\.title).joined(separator: " and ") + " are deleted right away, not moved to the Trash.")
+    }
     if dryRun {
       print(Term.bold("Dry run, nothing moved.") + " It would free about \(Term.size(total)).")
       return true
     }
     if !yes {
       guard isatty(STDIN_FILENO) == 1 else { Term.fail("run it in a terminal, or add --yes") }
-      guard Term.ask("Move \(chosen.map(\.title).joined(separator: ", ")) to the Trash?") else {
+      let verb = permanent.isEmpty ? "Move" : "Remove"
+      let suffix = permanent.isEmpty ? " to the Trash" : ""
+      guard Term.ask("\(verb) \(chosen.map(\.title).joined(separator: ", "))\(suffix)?") else {
         print("Nothing moved.")
         return true
       }
     }
     let result = Storage.clean(chosen)
     for p in result.problems { print(Term.yellow("!") + " " + p) }
-    print(Term.green("✓") + " Moved to the Trash. Empty the Trash to free about \(Term.size(total)).")
+    let trashed = chosen.filter { !$0.permanent }.reduce(Int64(0)) { $0 + $1.bytes }
+    if trashed > 0 { print(Term.green("✓") + " Moved to the Trash. Empty the Trash to free about \(Term.size(trashed)).") }
+    if !permanent.isEmpty && result.problems.isEmpty { print(Term.green("✓") + " Deleted " + permanent.map(\.title).joined(separator: " and ") + ".") }
     if result.protected > 0 { print(Term.dim("  \(result.protected) item(s) macOS protects stayed where they were.")) }
     return result.problems.isEmpty
   }

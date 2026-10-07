@@ -372,7 +372,7 @@ struct StorageView: View {
           }
         } header: {
           HStack {
-            Text("Files go to the Trash, so nothing is gone until you empty it.").textCase(nil)
+            Text("Files go to the Trash, so they aren't gone until you empty it. Simulators and snapshots are deleted right away.").textCase(nil)
             Spacer()
             if model.scanning { ProgressView().controlSize(.small) } else { Button("Scan Again") { model.scan() }.buttonStyle(.link) }
           }
@@ -400,7 +400,9 @@ struct StorageView: View {
     ) {
       Button("Move to Trash") { model.clean() }
     } message: {
-      Text("About \(Term.size(model.chosenBytes)). Items only an administrator can move ask for your password.")
+      let permanent = model.storage.filter { model.storageChosen.contains($0.id) && $0.permanent }.map(\.title)
+      Text("About \(Term.size(model.chosenBytes)). Items only an administrator can move ask for your password."
+        + (permanent.isEmpty ? "" : " \(permanent.joined(separator: " and ")) are deleted right away, not moved to the Trash."))
     }
   }
 }

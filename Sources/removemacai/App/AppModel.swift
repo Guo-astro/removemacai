@@ -309,13 +309,20 @@ final class AppModel {
 
   func clean() {
     let chosen = storage.filter { storageChosen.contains($0.id) }
-    let total = chosenBytes
     cleaning = true
     Task.detached(priority: .userInitiated) {
       let result = Storage.clean(chosen)
       let items = Storage.scan()
-      let left = items.filter { chosen.map(\.id).contains($0.id) }.reduce(Int64(0)) { $0 + $1.bytes }
-      var message = "Moved \(Term.size(max(0, total - left))) to the Trash. Empty the Trash to free the space."
+      let trashedIDs = chosen.filter { !$0.permanent }.map(\.id)
+      let trashedTotal = chosen.filter { !$0.permanent }.reduce(Int64(0)) { $0 + $1.bytes }
+      let left = items.filter { trashedIDs.contains($0.id) }.reduce(Int64(0)) { $0 + $1.bytes }
+      var parts: [String] = []
+      if !trashedIDs.isEmpty { parts.append("Moved \(Term.size(max(0, trashedTotal - left))) to the Trash. Empty the Trash to free the space.") }
+      let permanent = chosen.filter(\.permanent)
+      if !permanent.isEmpty && result.problems.isEmpty {
+        parts.append("Deleted \(permanent.map(\.title).joined(separator: " and ")).")
+      }
+      var message = parts.joined(separator: " ")
       if result.protected > 0 {
         message += " \(result.protected) item\(result.protected == 1 ? "" : "s") macOS protects stayed where \(result.protected == 1 ? "it was" : "they were")."
       }
