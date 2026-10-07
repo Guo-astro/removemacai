@@ -130,7 +130,9 @@ enum Commands {
       print("Profile it would install:  " + path.path)
       var deleting = sets
       var staying: [(String, String)] = []
-      if modelsAvailable, let split = try? Models.matching(sets) { (deleting, staying) = (split.matched, split.skipped) }
+      if modelsAvailable, let split = try? Models.matching(sets) {
+        (deleting, staying) = (split.matched.filter { Models.present($0) }, split.skipped)
+      }
       print("Models it would delete:    " + (deleting.isEmpty ? "none" : deleting.joined(separator: ", ")))
       for (name, reason) in staying {
         print("  " + Term.yellow("!") + " \(Catalog.modelSet(name)?.title ?? name) would stay: " + Term.dim(reason))

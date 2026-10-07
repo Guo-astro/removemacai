@@ -20,8 +20,9 @@ enum Term {
     return String(format: "%.0f MB", max(1, Double(bytes) / 1e6))
   }
 
+  /// Pads to a column width, keeping at least one space before the next column.
   static func pad(_ s: String, _ width: Int) -> String {
-    s.count >= width ? s : s + String(repeating: " ", count: width - s.count)
+    s.count >= width ? s + " " : s + String(repeating: " ", count: width - s.count)
   }
 
   static func ask(_ question: String) -> Bool {
