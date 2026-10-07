@@ -217,6 +217,10 @@ func selfTest() -> Bool {
     program: "/Library/PrivilegedHelperTools/dev.orbstack.OrbStack.privhelper", system: true)
   check(script.owner == "sync.sh" && helper.owner == "OrbStack", "background items are named after what they run")
 
+  let ranAll = Shell.run("/bin/sh", ["-c", Shell.adminScript(["false", "echo second"])])
+  check(!ranAll.ok && ranAll.output.contains("second"), "one failed administrator step doesn't skip the rest")
+  check(Shell.run("/bin/sh", ["-c", Shell.adminScript(["true", "true"])]).ok, "administrator steps succeed together")
+
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
 }
