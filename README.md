@@ -120,7 +120,7 @@ It holds the Apple Intelligence restrictions, the download block for removed mod
 - **Locked settings** (Apple Intelligence and the tweaks marked with a lock) go in one configuration profile that you approve in System Settings, because macOS requires that. Removing the profile undoes all of them.
 - **Other settings** are written the way `defaults write` writes them. RemoveMacAI first records each setting's previous value in `~/Library/Application Support/RemoveMacAI/journal.json`, and undo puts back exactly that value.
 - **Models** are removed through Apple's asset service, and the profile points their downloads at a closed local port so macOS doesn't fetch them again.
-- **Storage** cleanup moves files to the Trash, so nothing is gone until you empty it.
+- **Storage** cleanup moves files to the Trash, so they aren't gone until you empty it. Unavailable simulators and Time Machine local snapshots are deleted right away by `simctl` and `tmutil`.
 
 System Integrity Protection stays on, nothing under `/System` is modified, and RemoveMacAI makes no network requests and collects no data.
 

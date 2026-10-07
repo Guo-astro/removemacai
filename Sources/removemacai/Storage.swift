@@ -22,6 +22,9 @@ struct StorageItem: Identifiable {
   var paths: [String] = []
   var bytes: Int64 = 0
   var count: Int = 0
+
+  /// Simulators and snapshots are deleted by their own tools, not moved to the Trash.
+  var permanent: Bool { kind != .files }
 }
 
 enum Storage {
@@ -101,7 +104,8 @@ enum Storage {
 
     var simulators = StorageItem(
       id: "simulators", title: "Unavailable simulators",
-      detail: "Simulators for runtimes that are no longer installed, so they can't run.", kind: .simulators)
+      detail: "Simulators for runtimes that are no longer installed, so they can't run.",
+      caveat: "Deleted right away, not moved to the Trash.", kind: .simulators)
     let unavailable = unavailableSimulators()
     simulators.paths = unavailable
     simulators.count = unavailable.count
@@ -129,7 +133,8 @@ enum Storage {
     var snapshots = StorageItem(
       id: "snapshots", title: "Time Machine local snapshots",
       detail: "Hourly copies Time Machine keeps on this disk between backups. macOS counts them as System Data.",
-      caveat: "Your backups on the backup disk aren't touched.", kind: .snapshots)
+      caveat: "Deleted right away, not moved to the Trash. Your backups on the backup disk aren't touched.",
+      kind: .snapshots)
     snapshots.paths = localSnapshotDates()
     snapshots.count = snapshots.paths.count
     items.append(snapshots)
@@ -199,6 +204,7 @@ enum Storage {
     var problems: [String] = []
     /// Items macOS protects, which nobody can move without turning protections off.
     var protected = 0
+    var protectedBytes: Int64 = 0
   }
 
   static func clean(_ items: [StorageItem]) -> CleanResult {
@@ -219,6 +225,7 @@ enum Storage {
             let owner = (try? FileManager.default.attributesOfItem(atPath: path)[.ownerAccountID] as? NSNumber)?.uint32Value
             guard let owner, owner != getuid() else {
               result.protected += 1
+              result.protectedBytes += size(path)
               continue
             }
             let name = (path as NSString).lastPathComponent
