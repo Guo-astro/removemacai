@@ -217,6 +217,9 @@ func selfTest() -> Bool {
     program: "/Library/PrivilegedHelperTools/dev.orbstack.OrbStack.privhelper", system: true)
   check(script.owner == "sync.sh" && helper.owner == "OrbStack", "background items are named after what they run")
 
+  check(Storage.soundLibraryUsers(["com.apple.finder": "Finder", "com.example.missing": "Missing"]) == ["Finder"],
+    "apps that share the sound library are found by bundle identifier")
+
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
 }

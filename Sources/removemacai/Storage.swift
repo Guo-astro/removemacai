@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 
 /// Space RemoveMacAI can give back. Files go to the Trash, so nothing is
@@ -38,8 +39,15 @@ enum Storage {
     ("pages", "Pages", []),
   ]
 
-  /// Apps that share GarageBand's sound library.
-  static let soundLibraryApps = ["Logic Pro", "Logic Pro X", "MainStage", "MainStage 3"]
+  /// Apps that share GarageBand's sound library, by bundle identifier.
+  static let soundLibraryApps = ["com.apple.logic10": "Logic Pro", "com.apple.mainstage3": "MainStage"]
+
+  /// The sound library apps installed anywhere Launch Services knows of,
+  /// including an external disk.
+  static func soundLibraryUsers(_ apps: [String: String] = soundLibraryApps) -> [String] {
+    apps.filter { !NSWorkspace.shared.urlsForApplications(withBundleIdentifier: $0.key).isEmpty }
+      .map(\.value).sorted()
+  }
 
   /// Finds what can go and how big it is. Slow on big caches; call it off the main thread.
   static func scan() -> [StorageItem] {
@@ -93,7 +101,7 @@ enum Storage {
       caveat: "Quit your apps first. Apple's own caches are left alone.",
       paths: children(home + "/Library/Caches").filter { !($0 as NSString).lastPathComponent.hasPrefix("com.apple.") }))
 
-    let sharing = soundLibraryApps.filter { FileManager.default.fileExists(atPath: "/Applications/\($0).app") }
+    let sharing = soundLibraryUsers()
     for app in appleApps {
       let path = "/Applications/\(app.app).app"
       guard FileManager.default.fileExists(atPath: path) else { continue }
