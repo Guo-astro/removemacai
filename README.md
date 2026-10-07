@@ -140,6 +140,9 @@ System Integrity Protection stays on, nothing under `/System` is modified, and R
 **Does dictation still work?**
 Yes. Dictation is a separate setting, and its speech models are not removed.
 
+**Where do I use Photos Clean Up after keeping it enabled?**
+Open a photo in Photos, choose **Edit**, then **Tools > Clean Up**. Photos Clean Up is not a separate switch in System Settings.
+
 **Do macOS updates undo the changes?**
 The profile persists across updates. If an update resets one of the other settings, RemoveMacAI shows it as not applied and you can apply it again.
 
