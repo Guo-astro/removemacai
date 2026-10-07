@@ -222,6 +222,9 @@ func selfTest() -> Bool {
     system: false)
   check(updater.isUpdater && updater.warning == nil && !helper.isUpdater && helper.warning != nil,
     "helpers that aren't updaters carry a warning")
+  let vpn = BackgroundItem(label: "com.example.vpn", plist: "", program: "/Library/Example Updates/vpnd",
+    arguments: ["/Library/Example Updates/vpnd", "--check-updates"], system: true)
+  check(!vpn.isUpdater && vpn.warning != nil, "an unrelated mention of updates keeps the warning")
 
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0

@@ -16,10 +16,11 @@ struct BackgroundItem: Identifiable, Hashable {
 
   static let interpreters: Set<String> = ["sh", "bash", "zsh", "python3", "python", "node", "osascript", "perl", "ruby"]
 
-  /// Whether it only keeps its app up to date. Anything else (a VPN, Docker's
-  /// socket, a sync or licensing helper) can be what makes its app work.
+  /// Whether it only keeps its app up to date, judged by its label and the
+  /// name of what it runs. Anything else (a VPN, Docker's socket, a sync or
+  /// licensing helper) can be what makes its app work, so it gets a warning.
   var isUpdater: Bool {
-    ([label, program] + arguments).contains { $0.lowercased().contains("update") }
+    [label, (program as NSString).lastPathComponent].contains { $0.lowercased().contains("update") }
   }
 
   /// What switching it off can break, or nil for an updater.
