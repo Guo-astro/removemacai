@@ -242,6 +242,31 @@ func selfTest() -> Bool {
     check(model.modelBytes(["first"]) == 5 && model.modelBytes(["first", "second"]) == nil,
       "the review sheet shows a model size only when every set has a reading")
   }
+  // The journal, in a temporary folder instead of the real one.
+  let realFolder = Engine.folder
+  let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("removemacai-selftest-\(UUID().uuidString)")
+  try? FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+  Engine.folder = scratch
+  for _ in 0..<2 {
+    try? Data("garbage".utf8).write(to: Engine.journalURL)
+    _ = Engine.loadJournal()
+  }
+  let kept = (try? FileManager.default.contentsOfDirectory(atPath: scratch.path)) ?? []
+  check(kept.filter { $0.hasPrefix("journal-unreadable-") }.count == 2 && Engine.journalBlocked == nil,
+    "unreadable journals are each kept aside under their own name")
+  if getuid() != 0 {
+    try? Data("garbage".utf8).write(to: Engine.journalURL)
+    try? FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: scratch.path)
+    _ = Engine.loadJournal()
+    Engine.save(Engine.Journal())
+    check(Engine.journalBlocked != nil && (try? Data(contentsOf: Engine.journalURL)) == Data("garbage".utf8)
+      && Engine.runLocal(Plan()) == [Engine.journalBlocked!],
+      "a journal that can't be moved aside is never overwritten and blocks changes")
+    try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: scratch.path)
+  }
+  try? FileManager.default.removeItem(at: scratch)
+  Engine.folder = realFolder
+  Engine.journalBlocked = nil
 
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0

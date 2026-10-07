@@ -117,19 +117,37 @@ enum Engine {
     let plist: Data
   }
 
-  static var folder: URL {
-    FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/RemoveMacAI")
-  }
+  /// Where the journal lives; the self-test points it at a temporary folder.
+  static var folder = FileManager.default.homeDirectoryForCurrentUser
+    .appendingPathComponent("Library/Application Support/RemoveMacAI")
+
+  /// Why the journal can't be trusted, when an unreadable one couldn't be
+  /// moved aside. Nothing changes then, so the next save can't overwrite it.
+  static var journalBlocked: String?
   static var journalURL: URL { folder.appendingPathComponent("journal.json") }
 
+  /// The journal, or an empty one. One that can't be read is moved aside
+  /// first, so the next save doesn't overwrite the only record of what to undo.
   static func loadJournal() -> Journal {
+    journalBlocked = nil
     guard let data = try? Data(contentsOf: journalURL) else { return Journal() }
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
-    return (try? decoder.decode(Journal.self, from: data)) ?? Journal()
+    if let journal = try? decoder.decode(Journal.self, from: data) { return journal }
+    let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
+    let aside = folder.appendingPathComponent("journal-unreadable-\(stamp)-\(UUID().uuidString.prefix(8)).json")
+    do {
+      try FileManager.default.moveItem(at: journalURL, to: aside)
+      FileHandle.standardError.write(Data("warning: \(journalURL.path) could not be read, so it was kept as \(aside.path). Undo can't restore what it recorded.\n".utf8))
+    } catch {
+      journalBlocked = "\(journalURL.path) can't be read or moved aside (\(error.localizedDescription)), so RemoveMacAI changes nothing until it is moved or fixed."
+      FileHandle.standardError.write(Data("warning: \(journalBlocked!)\n".utf8))
+    }
+    return Journal()
   }
 
   static func save(_ journal: Journal) {
+    guard journalBlocked == nil else { return }
     let encoder = JSONEncoder()
     encoder.dateEncodingStrategy = .iso8601
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -284,6 +302,7 @@ enum Engine {
   /// needs it. The profile and the models are the caller's next steps.
   static func runLocal(_ plan: Plan) -> [String] {
     var journal = loadJournal()
+    if let blocked = journalBlocked { return [blocked] }
     var problems: [String] = []
     for tweak in plan.revert { problems += revert(tweak, journal: &journal).map { "\(tweak.title): \($0)" } }
     for tweak in plan.apply { problems += apply(tweak, journal: &journal).map { "\(tweak.title): \($0)" } }
@@ -297,6 +316,7 @@ enum Engine {
   /// are no longer in the catalog.
   static func revertAll() -> [String] {
     var journal = loadJournal()
+    if let blocked = journalBlocked { return [blocked] }
     var problems: [String] = []
     let ids = Set(journal.entries.values.map(\.tweak))
     var restart: [String] = []
