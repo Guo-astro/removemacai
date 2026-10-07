@@ -223,6 +223,9 @@ func selfTest() -> Bool {
   check(!exited.ok && exited.output.contains("after-exit"), "a step that exits doesn't stop the rest")
   check(Shell.run("/bin/sh", ["-c", Shell.adminScript(["true", "true"])]).ok, "administrator steps succeed together")
   check(Term.pad("abc", 5) == "abc  " && Term.pad("abcdef", 5) == "abcdef ", "columns never run together")
+  check(Storage.isAppleCache("/x/com.apple.Safari") && Storage.isAppleCache("/x/CloudKit")
+    && Storage.isAppleCache("/x/GeoServices") && !Storage.isAppleCache("/x/Homebrew")
+    && !Storage.isAppleCache("/x/com.google.Chrome"), "macOS caches without the com.apple. prefix are left alone")
 
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
