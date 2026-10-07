@@ -217,6 +217,12 @@ func selfTest() -> Bool {
     program: "/Library/PrivilegedHelperTools/dev.orbstack.OrbStack.privhelper", system: true)
   check(script.owner == "sync.sh" && helper.owner == "OrbStack", "background items are named after what they run")
 
+  let updater = BackgroundItem(label: "com.google.GoogleUpdater.wake", plist: "",
+    program: "/Users/x/Library/Application Support/Google/GoogleUpdater/Current/GoogleUpdater.app/Contents/MacOS/GoogleUpdater",
+    system: false)
+  check(updater.isUpdater && updater.warning == nil && !helper.isUpdater && helper.warning != nil,
+    "helpers that aren't updaters carry a warning")
+
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
 }

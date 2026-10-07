@@ -300,13 +300,16 @@ struct BackgroundView: View {
               Text(item.label).font(.caption.monospaced()).foregroundStyle(.secondary)
               Text(item.program).font(.caption2.monospaced()).foregroundStyle(.tertiary)
                 .lineLimit(1).truncationMode(.middle)
+              if let warning = item.warning {
+                Label(warning, systemImage: "exclamationmark.triangle").font(.caption).foregroundStyle(.orange)
+              }
             }
           }
           .toggleStyle(.switch)
           .disabled(model.backgroundBusy)
         }
       } header: {
-        Text("Updaters, helpers and agents other apps installed. They run whether or not their app is open. Switching one off takes effect at once.")
+        Text("Updaters, helpers and agents other apps installed. They run whether or not their app is open. Switching one off takes effect at once. Updaters are safe to switch off; a helper can be what makes its app work, such as a VPN or Docker.")
           .font(.body).foregroundStyle(.secondary).textCase(nil)
       } footer: {
         Footer("Items marked All users ask for your password. Apple's own background services are protected by System Integrity Protection, so RemoveMacAI leaves them alone.")

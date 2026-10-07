@@ -16,6 +16,17 @@ struct BackgroundItem: Identifiable, Hashable {
 
   static let interpreters: Set<String> = ["sh", "bash", "zsh", "python3", "python", "node", "osascript", "perl", "ruby"]
 
+  /// Whether it only keeps its app up to date. Anything else (a VPN, Docker's
+  /// socket, a sync or licensing helper) can be what makes its app work.
+  var isUpdater: Bool {
+    ([label, program] + arguments).contains { $0.lowercased().contains("update") }
+  }
+
+  /// What switching it off can break, or nil for an updater.
+  var warning: String? {
+    isUpdater ? nil : "Not an updater. Turning it off can stop \(owner) working."
+  }
+
   /// The app or program it runs, as people know it.
   var owner: String {
     if let app = program.split(separator: "/").first(where: { $0.hasSuffix(".app") }) {
