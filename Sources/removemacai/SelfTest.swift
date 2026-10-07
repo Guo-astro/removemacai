@@ -268,6 +268,39 @@ func selfTest() -> Bool {
   Engine.folder = realFolder
   Engine.journalBlocked = nil
 
+  // Partly applied tweaks are the person's own settings until they ask.
+  var s = Snapshot()
+  s.profile = Profile.Installed(on: true, ai: false, kept: [], tweaks: ["analytics"])
+  let states: [String: TweakState] = ["smart-punctuation": .partial, "autocorrect": .applied, "analytics": .partial]
+  let fake: (Tweak) -> TweakState = { states[$0.id] ?? .notApplied }
+  let applyOne = Plan.make(wanted: ["autocorrect", "file-extensions"], ai: nil, snapshot: s, state: fake)
+  check(applyOne.apply.map(\.id) == ["file-extensions"] && applyOne.revert.isEmpty && applyOne.profile == nil,
+    "applying a tweak leaves partly applied ones and the profile alone")
+  let undoOne = Plan.make(wanted: ["autocorrect"], ai: nil, undo: ["smart-punctuation"], snapshot: s, state: fake)
+  check(undoOne.revert.map(\.id) == ["smart-punctuation"] && undoOne.profile == nil,
+    "a partly applied tweak is undone when named")
+  let undoLocked = Plan.make(wanted: ["autocorrect"], ai: nil, undo: ["analytics"], snapshot: s, state: fake)
+  check(undoLocked.profile?.tweaks == [] && undoLocked.revert.map(\.id) == ["analytics"],
+    "a partly applied profile tweak leaves the profile when named")
+
+  MainActor.assumeIsolated {
+    let model = AppModel()
+    let partialTweak = Tweaks.tweak("smart-punctuation")!
+    model.states = Dictionary(uniqueKeysWithValues: Tweaks.all.map { ($0.id, TweakState.notApplied) })
+    model.states[partialTweak.id] = .partial
+    model.wanted = []
+    model.touched = []
+    model.toggle(partialTweak, false)
+    check(model.pendingTweaks.isEmpty, "switching off a partly applied tweak that is already off changes nothing")
+    model.toggle(partialTweak, true)
+    model.leave(partialTweak)
+    check(model.pendingTweaks.isEmpty, "leaving a partly applied tweak drops an earlier selection")
+    model.toggle(partialTweak, true)
+    model.toggle(partialTweak, false)
+    check(model.pendingTweaks.map(\.tweak.id) == [partialTweak.id] && model.pendingTweaks.first?.apply == false,
+      "switching a partly applied tweak on and off undoes it")
+  }
+
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
 }

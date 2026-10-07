@@ -218,7 +218,14 @@ struct TweakGroupView: View {
         Menu {
           Button("Select All") { for t in tweaks where t.supported { model.toggle(t, true) } }
           Button("Select Recommended") {
-            for t in tweaks { model.toggle(t, t.presets.contains(.recommended) || model.state(t) == .applied) }
+            for t in tweaks {
+              let recommended = t.presets.contains(.recommended)
+              if model.state(t) == .partial && !recommended {
+                model.leave(t)
+              } else {
+                model.toggle(t, recommended || model.state(t) == .applied)
+              }
+            }
           }
           Button("Deselect All") { for t in tweaks { model.toggle(t, false) } }
         } label: {
@@ -244,7 +251,7 @@ struct TweakRow: View {
             Image(systemName: "lock.fill").font(.caption2).foregroundStyle(.tertiary)
               .help("Locked by the RemoveMacAI profile")
           }
-          if let note = pendingNote(state: state, wanted: wanted) {
+          if let note = pendingNote(state: state, wanted: wanted, undoes: model.undoes(tweak)) {
             Text(note).font(.caption.weight(.medium)).foregroundStyle(.tint)
           }
         }
@@ -257,7 +264,7 @@ struct TweakRow: View {
         } else if state == .unsupported {
           Text("Needs macOS \(tweak.since.0).\(tweak.since.1) or newer.").font(.caption).foregroundStyle(.secondary)
         } else if state == .partial {
-          Text("Partly applied.").font(.caption).foregroundStyle(.secondary)
+          Text("Partly applied. It stays as it is unless you switch it.").font(.caption).foregroundStyle(.secondary)
         }
       }
       .padding(.vertical, 2)
@@ -266,9 +273,9 @@ struct TweakRow: View {
     .disabled(state == .managed || state == .unsupported)
   }
 
-  func pendingNote(state: TweakState, wanted: Bool) -> String? {
+  func pendingNote(state: TweakState, wanted: Bool, undoes: Bool) -> String? {
     if wanted && state != .applied { return "Applies on review" }
-    if !wanted && state != .notApplied && state != .managed && state != .unsupported { return "Undoes on review" }
+    if undoes { return "Undoes on review" }
     return nil
   }
 }
