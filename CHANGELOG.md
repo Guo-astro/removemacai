@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.0.1
+
+- Applying or undoing one tweak no longer resets a partly applied one, such as smart quotes off with dashes still on. A partly applied tweak only changes when you switch it yourself or name it in `undo`.
+- App caches leaves alone the macOS caches whose names don't start with `com.apple.`, such as CloudKit, FamilyCircle and GeoServices.
+- Removing GarageBand keeps its sound library when Logic Pro or MainStage is installed.
+- Unavailable simulators and Time Machine local snapshots now say they are deleted right away instead of moved to the Trash, and the button reads Remove when either is selected.
+- Background Items marks each item as an updater or a helper, and warns before a helper such as a VPN or Docker is turned off.
+- When one administrator step fails, the steps after it still run.
+- An undo journal that can't be read is kept aside instead of being overwritten.
+- The app only reports model space it measured.
+- Command-line columns no longer run together, and `off --dry-run` lists only models that are on disk.
+- The README says where to find Photos Clean Up.
+
+Contributed by Roland Kaibull in #22 to #30, and by kuishou68 in #21.
+
 ## 1.0.0
 
 RemoveMacAI is now a debloater for macOS, with a native app. Apple Intelligence works as before and is one part of it.
