@@ -13,7 +13,13 @@
 
 Debloat macOS. Turn off Apple Intelligence and delete its models, stop the analytics and ads, quiet the pop-ups, switch off other apps' background updaters and get disk space back. You see every change before it happens, and every change can be undone.
 
-**[omlahore.github.io/RemoveMacAI](https://omlahore.github.io/RemoveMacAI/)**
+<p align="center">
+  <a href="https://github.com/omlahore/RemoveMacAI/releases/latest/download/RemoveMacAI.zip"><img src="docs/download.svg" alt="Download for Mac" width="264" height="56"></a>
+</p>
+
+<p align="center">
+  <a href="https://omlahore.github.io/RemoveMacAI/">omlahore.github.io/RemoveMacAI</a>
+</p>
 
 Built on [pared](https://github.com/4evy/pared) by 4evy, who did the hard work first: mapping Apple's asset service, the model sets and the settings keys the Apple Intelligence part relies on.
 
