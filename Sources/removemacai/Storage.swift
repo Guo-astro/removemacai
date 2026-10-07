@@ -38,6 +38,19 @@ enum Storage {
     ("pages", "Pages", []),
   ]
 
+  /// Caches macOS keeps under names without the com.apple. prefix.
+  static let appleCaches: Set<String> = [
+    "amsdatamigratortool", "animoji", "apple", "askpermissiond", "cloudkit", "colorsync", "crashreporter",
+    "energykit", "familycircle", "familycircled", "gamekit", "geoservices", "icloudmailagent", "jetpackcache",
+    "maps", "metal", "passkit", "protectedcloudstorage", "screentimeagent", "siritts", "speechsynthesis",
+    "storeassetd", "storedownloadd",
+  ]
+
+  static func isAppleCache(_ path: String) -> Bool {
+    let name = (path as NSString).lastPathComponent.lowercased()
+    return name.hasPrefix("com.apple.") || appleCaches.contains(name)
+  }
+
   /// Finds what can go and how big it is. Slow on big caches; call it off the main thread.
   static func scan() -> [StorageItem] {
     var items: [StorageItem] = []
@@ -87,8 +100,8 @@ enum Storage {
     items.append(files(
       id: "caches", title: "App caches",
       detail: "Files apps keep to load faster. Apps rebuild them, so the first launch afterwards can be slower.",
-      caveat: "Quit your apps first. Apple's own caches are left alone.",
-      paths: children(home + "/Library/Caches").filter { !($0 as NSString).lastPathComponent.hasPrefix("com.apple.") }))
+      caveat: "Quit your apps first. The macOS caches RemoveMacAI knows about are left alone.",
+      paths: children(home + "/Library/Caches").filter { !isAppleCache($0) }))
 
     for app in appleApps {
       let path = "/Applications/\(app.app).app"

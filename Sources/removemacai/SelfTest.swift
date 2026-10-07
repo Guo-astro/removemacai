@@ -217,6 +217,10 @@ func selfTest() -> Bool {
     program: "/Library/PrivilegedHelperTools/dev.orbstack.OrbStack.privhelper", system: true)
   check(script.owner == "sync.sh" && helper.owner == "OrbStack", "background items are named after what they run")
 
+  check(Storage.isAppleCache("/x/com.apple.Safari") && Storage.isAppleCache("/x/CloudKit")
+    && Storage.isAppleCache("/x/GeoServices") && !Storage.isAppleCache("/x/Homebrew")
+    && !Storage.isAppleCache("/x/com.google.Chrome"), "macOS caches without the com.apple. prefix are left alone")
+
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
 }
