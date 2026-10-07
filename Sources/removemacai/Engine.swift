@@ -66,18 +66,28 @@ struct Plan {
 
   /// From the tweaks that should end up applied and what Apple Intelligence
   /// should look like (nil leaves it alone, a set turns it off except those).
-  static func make(wanted: Set<String>, ai: Set<String>?, snapshot s: Snapshot = Snapshot()) -> Plan {
+  /// A partly applied tweak is often the person's own setting, so it is only
+  /// undone when named in `undo`.
+  static func make(
+    wanted: Set<String>, ai: Set<String>?, undo: Set<String> = [], snapshot s: Snapshot = Snapshot(),
+    state read: ((Tweak) -> TweakState)? = nil
+  ) -> Plan {
+    let stateOf = read ?? s.state
     var plan = Plan()
+    func keepsPartial(_ tweak: Tweak) -> Bool { stateOf(tweak) == .partial && !undo.contains(tweak.id) }
     for tweak in Tweaks.all {
-      let state = s.state(tweak)
+      let state = stateOf(tweak)
       guard state != .managed && state != .unsupported else { continue }
       if wanted.contains(tweak.id) && state != .applied {
         plan.apply.append(tweak)
-      } else if !wanted.contains(tweak.id) && state != .notApplied {
+      } else if !wanted.contains(tweak.id) && state != .notApplied && !keepsPartial(tweak) {
         plan.revert.append(tweak)
       }
     }
-    let profileTweaks = Set(Tweaks.all.filter { $0.inProfile && wanted.contains($0.id) && s.state($0) != .managed && $0.supported }.map(\.id))
+    let profileTweaks = Set(Tweaks.all.filter {
+      $0.inProfile && stateOf($0) != .managed && $0.supported
+        && (wanted.contains($0.id) || (keepsPartial($0) && s.profile.tweaks.contains($0.id)))
+    }.map(\.id))
     let target = Profile.Contents(ai: ai, tweaks: profileTweaks)
     let current = s.profile.contents ?? Profile.Contents(ai: nil, tweaks: [])
     if target != current { plan.profile = target }

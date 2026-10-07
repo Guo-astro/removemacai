@@ -65,7 +65,7 @@ enum TweakCommands {
       wanted.remove(id)
     }
     let ai: Set<String>? = s.profile.on && s.profile.ai ? s.profile.kept : nil
-    let plan = Plan.make(wanted: wanted, ai: ai, snapshot: s)
+    let plan = Plan.make(wanted: wanted, ai: ai, undo: Set(ids), snapshot: s)
     return run(plan, dryRun: dryRun, yes: yes, verb: "Undo")
   }
 

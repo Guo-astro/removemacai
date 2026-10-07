@@ -49,6 +49,8 @@ final class AppModel {
 
   // What the person wants.
   var wanted: Set<String> = []
+  /// Tweaks the person switched, so a partly applied one is only undone on request.
+  var touched: Set<String> = []
   var aiOff = false
   var aiKept: Set<String> = []
 
@@ -88,6 +90,7 @@ final class AppModel {
     journal = Engine.loadJournal()
     if resetChoices {
       wanted = Set(states.filter { $0.value == .applied }.map(\.key))
+      touched = []
       aiOff = currentAI != nil
       aiKept = snapshot.profile.ai ? snapshot.profile.kept : []
     }
@@ -127,7 +130,15 @@ final class AppModel {
   func isOn(_ tweak: Tweak) -> Bool { wanted.contains(tweak.id) }
 
   func toggle(_ tweak: Tweak, _ on: Bool) {
+    touched.insert(tweak.id)
     if on { wanted.insert(tweak.id) } else { wanted.remove(tweak.id) }
+  }
+
+  /// Whether leaving the tweak unwanted undoes it.
+  func undoes(_ tweak: Tweak) -> Bool {
+    let s = state(tweak)
+    guard !wanted.contains(tweak.id), s != .notApplied, s != .managed, s != .unsupported else { return false }
+    return s != .partial || touched.contains(tweak.id)
   }
 
   func choose(_ preset: Preset) {
@@ -143,9 +154,8 @@ final class AppModel {
     Tweaks.all.compactMap { t in
       let s = state(t)
       guard s != .managed && s != .unsupported else { return nil }
-      let want = wanted.contains(t.id)
-      if want && s != .applied { return (t, true) }
-      if !want && s != .notApplied { return (t, false) }
+      if wanted.contains(t.id) && s != .applied { return (t, true) }
+      if undoes(t) { return (t, false) }
       return nil
     }
   }
@@ -157,7 +167,7 @@ final class AppModel {
 
   func discard() { reload(resetChoices: true) }
 
-  func plan() -> Plan { Plan.make(wanted: wanted, ai: targetAI, snapshot: snapshot) }
+  func plan() -> Plan { Plan.make(wanted: wanted, ai: targetAI, undo: touched, snapshot: snapshot) }
 
   // MARK: applying
 

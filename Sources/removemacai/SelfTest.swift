@@ -217,6 +217,22 @@ func selfTest() -> Bool {
     program: "/Library/PrivilegedHelperTools/dev.orbstack.OrbStack.privhelper", system: true)
   check(script.owner == "sync.sh" && helper.owner == "OrbStack", "background items are named after what they run")
 
+
+  // Partly applied tweaks are the person's own settings until they ask.
+  var s = Snapshot()
+  s.profile = Profile.Installed(on: true, ai: false, kept: [], tweaks: ["analytics"])
+  let states: [String: TweakState] = ["smart-punctuation": .partial, "autocorrect": .applied, "analytics": .partial]
+  let fake: (Tweak) -> TweakState = { states[$0.id] ?? .notApplied }
+  let applyOne = Plan.make(wanted: ["autocorrect", "file-extensions"], ai: nil, snapshot: s, state: fake)
+  check(applyOne.apply.map(\.id) == ["file-extensions"] && applyOne.revert.isEmpty && applyOne.profile == nil,
+    "applying a tweak leaves partly applied ones and the profile alone")
+  let undoOne = Plan.make(wanted: ["autocorrect"], ai: nil, undo: ["smart-punctuation"], snapshot: s, state: fake)
+  check(undoOne.revert.map(\.id) == ["smart-punctuation"] && undoOne.profile == nil,
+    "a partly applied tweak is undone when named")
+  let undoLocked = Plan.make(wanted: ["autocorrect"], ai: nil, undo: ["analytics"], snapshot: s, state: fake)
+  check(undoLocked.profile?.tweaks == [] && undoLocked.revert.map(\.id) == ["analytics"],
+    "a partly applied profile tweak leaves the profile when named")
+
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
 }
