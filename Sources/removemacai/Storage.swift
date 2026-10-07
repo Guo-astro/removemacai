@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 
 /// Space RemoveMacAI can give back. Files go to the Trash, so nothing is
@@ -49,6 +50,16 @@ enum Storage {
   static func isAppleCache(_ path: String) -> Bool {
     let name = (path as NSString).lastPathComponent.lowercased()
     return name.hasPrefix("com.apple.") || appleCaches.contains(name)
+  }
+
+  /// Apps that share GarageBand's sound library, by bundle identifier.
+  static let soundLibraryApps = ["com.apple.logic10": "Logic Pro", "com.apple.mainstage3": "MainStage"]
+
+  /// The sound library apps installed anywhere Launch Services knows of,
+  /// including an external disk.
+  static func soundLibraryUsers(_ apps: [String: String] = soundLibraryApps) -> [String] {
+    apps.filter { !NSWorkspace.shared.urlsForApplications(withBundleIdentifier: $0.key).isEmpty }
+      .map(\.value).sorted()
   }
 
   /// Finds what can go and how big it is. Slow on big caches; call it off the main thread.
@@ -103,13 +114,16 @@ enum Storage {
       caveat: "Quit your apps first. The macOS caches RemoveMacAI knows about are left alone.",
       paths: children(home + "/Library/Caches").filter { !isAppleCache($0) }))
 
+    let sharing = soundLibraryUsers()
     for app in appleApps {
       let path = "/Applications/\(app.app).app"
       guard FileManager.default.fileExists(atPath: path) else { continue }
+      let keepExtra = !app.extra.isEmpty && !sharing.isEmpty
       items.append(files(
         id: app.id, title: app.app,
         detail: "One of Apple's optional apps. It reinstalls free from the App Store.",
-        paths: [path] + app.extra.filter { FileManager.default.fileExists(atPath: $0) }))
+        caveat: keepExtra ? "Its sound library stays, because \(sharing.joined(separator: " and ")) uses it too." : nil,
+        paths: [path] + (keepExtra ? [] : app.extra.filter { FileManager.default.fileExists(atPath: $0) })))
     }
 
     var snapshots = StorageItem(

@@ -226,6 +226,8 @@ func selfTest() -> Bool {
   check(Storage.isAppleCache("/x/com.apple.Safari") && Storage.isAppleCache("/x/CloudKit")
     && Storage.isAppleCache("/x/GeoServices") && !Storage.isAppleCache("/x/Homebrew")
     && !Storage.isAppleCache("/x/com.google.Chrome"), "macOS caches without the com.apple. prefix are left alone")
+  check(Storage.soundLibraryUsers(["com.apple.finder": "Finder", "com.example.missing": "Missing"]) == ["Finder"],
+    "apps that share the sound library are found by bundle identifier")
 
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
