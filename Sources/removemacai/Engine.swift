@@ -122,11 +122,19 @@ enum Engine {
   }
   static var journalURL: URL { folder.appendingPathComponent("journal.json") }
 
+  /// The journal, or an empty one. One that can't be read is moved aside
+  /// first, so the next save doesn't overwrite the only record of what to undo.
   static func loadJournal() -> Journal {
     guard let data = try? Data(contentsOf: journalURL) else { return Journal() }
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
-    return (try? decoder.decode(Journal.self, from: data)) ?? Journal()
+    if let journal = try? decoder.decode(Journal.self, from: data) { return journal }
+    let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
+    let aside = folder.appendingPathComponent("journal-unreadable-\(stamp).json")
+    if (try? FileManager.default.moveItem(at: journalURL, to: aside)) != nil {
+      FileHandle.standardError.write(Data("warning: \(journalURL.path) could not be read, so it was kept as \(aside.path). Undo can't restore what it recorded.\n".utf8))
+    }
+    return Journal()
   }
 
   static func save(_ journal: Journal) {
