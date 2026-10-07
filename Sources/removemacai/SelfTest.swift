@@ -233,6 +233,24 @@ func selfTest() -> Bool {
   check(undoLocked.profile?.tweaks == [] && undoLocked.revert.map(\.id) == ["analytics"],
     "a partly applied profile tweak leaves the profile when named")
 
+  MainActor.assumeIsolated {
+    let model = AppModel()
+    let partialTweak = Tweaks.tweak("smart-punctuation")!
+    model.states = Dictionary(uniqueKeysWithValues: Tweaks.all.map { ($0.id, TweakState.notApplied) })
+    model.states[partialTweak.id] = .partial
+    model.wanted = []
+    model.touched = []
+    model.toggle(partialTweak, false)
+    check(model.pendingTweaks.isEmpty, "switching off a partly applied tweak that is already off changes nothing")
+    model.toggle(partialTweak, true)
+    model.leave(partialTweak)
+    check(model.pendingTweaks.isEmpty, "leaving a partly applied tweak drops an earlier selection")
+    model.toggle(partialTweak, true)
+    model.toggle(partialTweak, false)
+    check(model.pendingTweaks.map(\.tweak.id) == [partialTweak.id] && model.pendingTweaks.first?.apply == false,
+      "switching a partly applied tweak on and off undoes it")
+  }
+
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
 }

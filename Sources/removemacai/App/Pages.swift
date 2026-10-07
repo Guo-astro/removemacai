@@ -218,8 +218,13 @@ struct TweakGroupView: View {
         Menu {
           Button("Select All") { for t in tweaks where t.supported { model.toggle(t, true) } }
           Button("Select Recommended") {
-            for t in tweaks where t.presets.contains(.recommended) || model.state(t) != .partial {
-              model.toggle(t, t.presets.contains(.recommended) || model.state(t) == .applied)
+            for t in tweaks {
+              let recommended = t.presets.contains(.recommended)
+              if model.state(t) == .partial && !recommended {
+                model.leave(t)
+              } else {
+                model.toggle(t, recommended || model.state(t) == .applied)
+              }
             }
           }
           Button("Deselect All") { for t in tweaks { model.toggle(t, false) } }

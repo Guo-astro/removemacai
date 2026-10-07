@@ -130,8 +130,15 @@ final class AppModel {
   func isOn(_ tweak: Tweak) -> Bool { wanted.contains(tweak.id) }
 
   func toggle(_ tweak: Tweak, _ on: Bool) {
+    guard wanted.contains(tweak.id) != on else { return }
     touched.insert(tweak.id)
     if on { wanted.insert(tweak.id) } else { wanted.remove(tweak.id) }
+  }
+
+  /// Drops any choice made for the tweak, so it stays as it is on the Mac.
+  func leave(_ tweak: Tweak) {
+    wanted.remove(tweak.id)
+    touched.remove(tweak.id)
   }
 
   /// Whether leaving the tweak unwanted undoes it.
