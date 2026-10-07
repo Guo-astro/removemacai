@@ -219,6 +219,8 @@ func selfTest() -> Bool {
 
   let ranAll = Shell.run("/bin/sh", ["-c", Shell.adminScript(["false", "echo second"])])
   check(!ranAll.ok && ranAll.output.contains("second"), "one failed administrator step doesn't skip the rest")
+  let exited = Shell.run("/bin/sh", ["-c", Shell.adminScript(["exit 3", "echo after-exit"])])
+  check(!exited.ok && exited.output.contains("after-exit"), "a step that exits doesn't stop the rest")
   check(Shell.run("/bin/sh", ["-c", Shell.adminScript(["true", "true"])]).ok, "administrator steps succeed together")
 
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))

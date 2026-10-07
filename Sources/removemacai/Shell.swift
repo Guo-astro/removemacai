@@ -43,7 +43,7 @@ enum Shell {
   }
 
   static func adminScript(_ commands: [String]) -> String {
-    (["rc=0"] + commands.map { "{ \($0); } || rc=1" } + ["exit $rc"]).joined(separator: "; ")
+    (["rc=0"] + commands.map { "( \($0) ) || rc=1" } + ["exit $rc"]).joined(separator: "; ")
   }
 
   /// A readable reason for a failed administrator step. osascript prefixes
