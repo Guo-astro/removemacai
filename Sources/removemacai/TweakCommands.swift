@@ -215,7 +215,7 @@ enum TweakCommands {
     }
     let result = Storage.clean(chosen)
     for p in result.problems { print(Term.yellow("!") + " " + p) }
-    let trashed = chosen.filter { !$0.permanent }.reduce(Int64(0)) { $0 + $1.bytes }
+    let trashed = chosen.filter { !$0.permanent }.reduce(Int64(0)) { $0 + $1.bytes } - result.protectedBytes
     if trashed > 0 { print(Term.green("✓") + " Moved to the Trash. Empty the Trash to free about \(Term.size(trashed)).") }
     if !permanent.isEmpty && result.problems.isEmpty { print(Term.green("✓") + " Deleted " + permanent.map(\.title).joined(separator: " and ") + ".") }
     if result.protected > 0 { print(Term.dim("  \(result.protected) item(s) macOS protects stayed where they were.")) }

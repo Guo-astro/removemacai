@@ -177,6 +177,7 @@ enum Storage {
     var problems: [String] = []
     /// Items macOS protects, which nobody can move without turning protections off.
     var protected = 0
+    var protectedBytes: Int64 = 0
   }
 
   static func clean(_ items: [StorageItem]) -> CleanResult {
@@ -197,6 +198,7 @@ enum Storage {
             let owner = (try? FileManager.default.attributesOfItem(atPath: path)[.ownerAccountID] as? NSNumber)?.uint32Value
             guard let owner, owner != getuid() else {
               result.protected += 1
+              result.protectedBytes += size(path)
               continue
             }
             let name = (path as NSString).lastPathComponent

@@ -328,6 +328,11 @@ struct StorageView: View {
   @Environment(AppModel.self) private var model
   @State private var confirming = false
 
+  /// Selected items that are deleted right away instead of going to the Trash.
+  var permanentChosen: [String] {
+    model.storage.filter { model.storageChosen.contains($0.id) && $0.permanent }.map(\.title)
+  }
+
   var body: some View {
     Form {
       if !model.scanned {
@@ -386,7 +391,7 @@ struct StorageView: View {
             }
             Spacer()
             if model.cleaning { ProgressView().controlSize(.small) }
-            Button("Move to Trash…") { confirming = true }
+            Button(permanentChosen.isEmpty ? "Move to Trash…" : "Remove…") { confirming = true }
               .buttonStyle(.borderedProminent)
               .disabled(model.storageChosen.isEmpty || model.cleaning)
           }
@@ -396,13 +401,13 @@ struct StorageView: View {
     .formStyle(.grouped)
     .navigationTitle("Storage")
     .confirmationDialog(
-      "Move the selected items to the Trash?", isPresented: $confirming
+      permanentChosen.isEmpty ? "Move the selected items to the Trash?" : "Remove the selected items?",
+      isPresented: $confirming
     ) {
-      Button("Move to Trash") { model.clean() }
+      Button(permanentChosen.isEmpty ? "Move to Trash" : "Remove") { model.clean() }
     } message: {
-      let permanent = model.storage.filter { model.storageChosen.contains($0.id) && $0.permanent }.map(\.title)
       Text("About \(Term.size(model.chosenBytes)). Items only an administrator can move ask for your password."
-        + (permanent.isEmpty ? "" : " \(permanent.joined(separator: " and ")) are deleted right away, not moved to the Trash."))
+        + (permanentChosen.isEmpty ? "" : " \(permanentChosen.joined(separator: " and ")) are deleted right away, not moved to the Trash."))
     }
   }
 }
