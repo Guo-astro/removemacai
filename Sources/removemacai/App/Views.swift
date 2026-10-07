@@ -125,10 +125,10 @@ struct ReviewSheet: View {
                 Label("Turn Apple Intelligence back on. macOS downloads its models again when a feature needs them.", systemImage: "arrow.uturn.backward")
               }
               if !plan.models.isEmpty {
+                let bytes = model.modelBytes(plan.models)
                 Label(
-                  model.modelTotal > 0
-                    ? "Delete the models, about \(Term.size(model.modelTotal))"
-                    : "Ask macOS to finish removing leftover model files",
+                  bytes.map { $0 > 0 ? "Delete the models, about \(Term.size($0))" : "Ask macOS to finish removing leftover model files" }
+                    ?? "Delete the models",
                   systemImage: "trash")
               }
             }

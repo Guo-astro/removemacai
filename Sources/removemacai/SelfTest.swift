@@ -236,6 +236,12 @@ func selfTest() -> Bool {
   let vpn = BackgroundItem(label: "com.example.vpn", plist: "", program: "/Library/Example Updates/vpnd",
     arguments: ["/Library/Example Updates/vpnd", "--check-updates"], system: true)
   check(!vpn.isUpdater && vpn.warning != nil, "an unrelated mention of updates keeps the warning")
+  MainActor.assumeIsolated {
+    let model = AppModel()
+    model.modelBytes = ["first": 5]
+    check(model.modelBytes(["first"]) == 5 && model.modelBytes(["first", "second"]) == nil,
+      "the review sheet shows a model size only when every set has a reading")
+  }
 
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0

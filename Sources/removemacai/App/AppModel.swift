@@ -116,6 +116,9 @@ final class AppModel {
 
   var modelTotal: Int64 { modelBytes.values.reduce(0, +) }
 
+  /// The size of these sets, or nil unless every one of them has a reading.
+  func modelBytes(_ sets: [String]) -> Int64? { Models.total(sets, read: { self.modelBytes[$0] }) }
+
   func loadBackground() {
     background = BackgroundItems.scan()
     let labels = BackgroundItems.disabledLabels()
@@ -166,7 +169,6 @@ final class AppModel {
     reviewing = false
     run = .working("Changing settings")
     cancelWait = false
-    let before = modelTotal
     Task.detached(priority: .userInitiated) {
       var problems = Engine.runLocal(plan)
       var freed: Int64? = nil
@@ -190,7 +192,7 @@ final class AppModel {
         await MainActor.run { self.run = .working("Deleting Apple Intelligence models") }
         let result = Self.deleteModels(plan.models)
         problems += result.problems
-        freed = result.freed ?? (before > 0 ? before : nil)
+        freed = result.freed
       }
       let outcome = RunState.finished(problems: problems, freed: freed)
       await MainActor.run {
