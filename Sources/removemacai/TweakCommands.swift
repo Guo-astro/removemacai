@@ -142,10 +142,14 @@ enum TweakCommands {
       }
       print(Term.bold("Background items from other apps"))
       for item in items {
-        let state = BackgroundItems.isDisabled(item, labels) ? Term.dim("off") : Term.green("on")
-        print("  " + Term.pad(item.label, 48) + Term.pad(item.owner, 22) + state + (item.system ? Term.dim("  (all users)") : ""))
+        let off = BackgroundItems.isDisabled(item, labels)
+        let state = off ? Term.dim(Term.pad("off", 5)) : Term.green(Term.pad("on", 5))
+        let kind = item.isUpdater ? Term.dim("updater") : Term.yellow("helper")
+        print("  " + Term.pad(item.label, 48) + Term.pad(item.owner, 22) + state + kind
+          + (item.system ? Term.dim("  (all users)") : ""))
       }
       print()
+      print(Term.dim("Turning off a helper can stop its app working, for example a VPN or Docker."))
       print(Term.dim("Turn one off with: removemacai background off <label>"))
       return true
     }
@@ -155,6 +159,9 @@ enum TweakCommands {
       Term.fail("there is no background item called \"\(name)\"")
     }
     guard !chosen.isEmpty else { Term.fail("name the items, as listed by: removemacai background") }
+    if action == "off" {
+      for item in chosen { if let warning = item.warning { print(Term.yellow("!") + " \(item.label): " + warning) } }
+    }
     if !yes {
       guard isatty(STDIN_FILENO) == 1 else { Term.fail("run it in a terminal, or add --yes") }
       let verb = action == "off" ? "Turn off" : "Turn on"

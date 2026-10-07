@@ -228,6 +228,14 @@ func selfTest() -> Bool {
     && !Storage.isAppleCache("/x/com.google.Chrome"), "macOS caches without the com.apple. prefix are left alone")
   check(Storage.soundLibraryUsers(["com.apple.finder": "Finder", "com.example.missing": "Missing"]) == ["Finder"],
     "apps that share the sound library are found by bundle identifier")
+  let updater = BackgroundItem(label: "com.google.GoogleUpdater.wake", plist: "",
+    program: "/Users/x/Library/Application Support/Google/GoogleUpdater/Current/GoogleUpdater.app/Contents/MacOS/GoogleUpdater",
+    system: false)
+  check(updater.isUpdater && updater.warning == nil && !helper.isUpdater && helper.warning != nil,
+    "helpers that aren't updaters carry a warning")
+  let vpn = BackgroundItem(label: "com.example.vpn", plist: "", program: "/Library/Example Updates/vpnd",
+    arguments: ["/Library/Example Updates/vpnd", "--check-updates"], system: true)
+  check(!vpn.isUpdater && vpn.warning != nil, "an unrelated mention of updates keeps the warning")
 
   print(failed == 0 ? Term.green("all checks passed") : Term.red("\(failed) failed"))
   return failed == 0
