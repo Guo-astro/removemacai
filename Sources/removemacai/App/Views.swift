@@ -126,8 +126,8 @@ struct ReviewSheet: View {
               }
               if !plan.models.isEmpty {
                 Label(
-                  model.modelTotal > 0
-                    ? "Delete the models, about \(Term.size(model.modelTotal))"
+                  model.modelBytes(plan.models) > 0
+                    ? "Delete the models, about \(Term.size(model.modelBytes(plan.models)))"
                     : "Ask macOS to finish removing leftover model files",
                   systemImage: "trash")
               }
