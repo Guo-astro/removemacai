@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2
+
+- `off` no longer asks Apple's asset service to remove model sets that are already gone. It now tells an empty asset folder from a full one using what macOS reports without root, instead of treating any folder it can't list as full.
+
+Contributed by tully-8888 in #6.
+
 ## 1.0.1
 
 - Applying or undoing one tweak no longer resets a partly applied one, such as smart quotes off with dashes still on. A partly applied tweak only changes when you switch it yourself or name it in `undo`.
