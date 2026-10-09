@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3
+
+- New opt-in tweak, Block Music launches. It stops AirPods and the play key from opening Music, closes Music if it's running, and blocks opening it by hand. Undo puts everything back. Apply it again after a macOS update replaces Music.
+
+Contributed by vadika in #37.
+
 ## 1.0.2
 
 - `off` no longer asks Apple's asset service to remove model sets that are already gone. It now tells an empty asset folder from a full one using what macOS reports without root, instead of treating any folder it can't list as full.
