@@ -172,6 +172,23 @@ Run `removemacai revert` or click Undo Everything in the app, then delete the ap
 
 The Apple Intelligence part of RemoveMacAI is built on [pared](https://github.com/4evy/pared), a complete working tool by 4evy that first mapped the asset service, the model sets and several of the settings keys. Its license is in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
+## Contributors
+
+Thanks to everyone who has sent fixes, features, bug reports and testing.
+
+<a href="https://github.com/omlahore/RemoveMacAI/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=omlahore/RemoveMacAI" alt="Contributors" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
+## Star history
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/omlahore/RemoveMacAI/stars/stars-dark.svg" />
+  <img alt="RemoveMacAI GitHub stars over time" src="https://raw.githubusercontent.com/omlahore/RemoveMacAI/stars/stars-light.svg" />
+</picture>
+
 ## Support
 
 If RemoveMacAI is useful to you, you can [sponsor it on GitHub](https://github.com/sponsors/omlahore).
