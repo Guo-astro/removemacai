@@ -1,4 +1,3 @@
-// MrTiptop
 import Foundation
 
 /// A configuration profile that turns Apple Intelligence off on an iPhone or

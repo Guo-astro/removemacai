@@ -98,6 +98,7 @@ Two presets get you started. **Recommended** turns Apple Intelligence, analytics
 | `removemacai background` | List other apps' background items; `off` or `on` with their labels |
 | `removemacai clean` | Show the space you can get back; name items to move them to the Trash |
 | `removemacai export <file>` | Write the configuration profile for an MDM |
+| `removemacai export <file> --for iphone\|ipad` | Write an iPhone or iPad profile |
 | `removemacai revert` | Undo everything RemoveMacAI changed |
 | `removemacai app` | Open the app |
 
@@ -122,6 +123,17 @@ removemacai export Privacy.mobileconfig --no-ai analytics personalized-ads spotl
 ```
 
 It holds the Apple Intelligence restrictions, the download block for removed models and the locked tweaks. Per-user tweaks such as Finder and Dock settings aren't in the profile; `removemacai apply` sets those on each Mac. `removemacai tweaks --json` reports the state of every tweak for compliance scripts.
+
+## iPhone and iPad
+
+`export --for iphone` or `export --for ipad` writes a profile for that device:
+
+```sh
+removemacai export Phone.mobileconfig --for iphone
+removemacai export Pad.mobileconfig --for ipad
+```
+
+An unsupervised phone only honors the Siri and ChatGPT switches.
 
 ## How it works
 
