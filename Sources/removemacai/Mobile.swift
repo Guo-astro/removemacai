@@ -30,50 +30,47 @@ enum Mobile {
     let title: String
     let restrictions: [String]
     let supervised: Bool
-    /// Visual Intelligence is an iPhone camera feature. iPadOS has no switch.
-    let iPhoneOnly: Bool
   }
 
   static let features: [Feature] = [
     Feature(
       id: "siri", title: "Siri and Siri AI",
-      restrictions: ["allowAssistant", "allowSiriAI"], supervised: false, iPhoneOnly: false),
+      restrictions: ["allowAssistant", "allowSiriAI"], supervised: false),
     Feature(
       id: "chatgpt", title: "ChatGPT and other AI extensions",
       restrictions: [
         "allowExternalIntelligenceIntegrations", "allowExternalIntelligenceIntegrationsSignIn",
-      ], supervised: false, iPhoneOnly: false),
+      ], supervised: false),
     Feature(
       id: "writing-tools", title: "Writing Tools",
-      restrictions: ["allowWritingTools"], supervised: true, iPhoneOnly: false),
+      restrictions: ["allowWritingTools"], supervised: true),
     Feature(
       id: "genmoji", title: "Genmoji",
-      restrictions: ["allowGenmoji"], supervised: true, iPhoneOnly: false),
+      restrictions: ["allowGenmoji"], supervised: true),
     Feature(
       id: "image-playground", title: "Image Playground",
-      restrictions: ["allowImagePlayground"], supervised: true, iPhoneOnly: false),
+      restrictions: ["allowImagePlayground"], supervised: true),
     Feature(
       id: "image-wand", title: "Image Wand",
-      restrictions: ["allowImageWand"], supervised: true, iPhoneOnly: false),
+      restrictions: ["allowImageWand"], supervised: true),
     Feature(
       id: "mail", title: "Mail summaries and smart replies",
-      restrictions: ["allowMailSummary", "allowMailSmartReplies"], supervised: true, iPhoneOnly: false),
+      restrictions: ["allowMailSummary", "allowMailSmartReplies"], supervised: true),
     Feature(
       id: "safari-summaries", title: "Safari summaries",
-      restrictions: ["allowSafariSummary"], supervised: true, iPhoneOnly: false),
+      restrictions: ["allowSafariSummary"], supervised: true),
     Feature(
       id: "notes-summaries", title: "Notes transcription summaries",
-      restrictions: ["allowNotesTranscriptionSummary"], supervised: true, iPhoneOnly: false),
+      restrictions: ["allowNotesTranscriptionSummary"], supervised: true),
     Feature(
-      id: "visual-intelligence", title: "Visual Intelligence",
-      restrictions: ["allowVisualIntelligenceSummary"], supervised: true, iPhoneOnly: true),
+      id: "visual-intelligence", title: "Visual Intelligence summaries",
+      restrictions: ["allowVisualIntelligenceSummary"], supervised: true),
   ]
 
   static func feature(_ id: String) -> Feature? { features.first { $0.id == id } }
 
-  static func features(for device: Device) -> [Feature] {
-    features.filter { !$0.iPhoneOnly || device == .iPhone }
-  }
+  /// iPhone and iPad use the same restriction keys. Apple's schema lists them under iOS.
+  static func features(for _: Device) -> [Feature] { features }
 
   /// The profile for `device`, with every feature off except `kept`.
   static func data(keeping kept: Set<String>, device: Device) throws -> Data {
@@ -82,10 +79,13 @@ enum Mobile {
       for key in feature.restrictions { restrictions[key] = false }
     }
     let supervised = features(for: device).filter(\.supervised).map(\.title).joined(separator: ", ")
+    let mailNote = kept.contains("mail")
+      ? ""
+      : " Mail summaries turn off the ones you start yourself. Mail can still write them on its own."
     let description = """
     Turns off Apple Intelligence on this \(device.rawValue). Remove the profile and the switches come back. \
     \(device.systemName) does not let a profile delete the model files. \
-    Siri and ChatGPT extensions apply on any device. \(supervised) apply on a supervised device. Shared iPad ignores them.
+    Siri and ChatGPT extensions apply on any device. \(supervised) apply on a supervised device. Shared iPad ignores them.\(mailNote)
     """
     let profile: [String: Any] = [
       "PayloadType": "Configuration",

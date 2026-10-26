@@ -270,11 +270,8 @@ enum TweakCommands {
     if noAI { Term.fail("--no-ai leaves Apple Intelligence alone, so an \(device.rawValue) profile would be empty") }
     let names = Mobile.features(for: device).map(\.id).joined(separator: ", ")
     for id in keepAI.sorted() {
-      guard let feature = Mobile.feature(id) else {
+      guard Mobile.feature(id) != nil else {
         Term.fail("there is no \(device.rawValue) feature called \"\(id)\". Names: \(names)")
-      }
-      if feature.iPhoneOnly && device != .iPhone {
-        Term.fail("\(feature.title) is an iPhone feature. Leave it out of --keep on an iPad")
       }
     }
     let off = Mobile.features(for: device).filter { !keepAI.contains($0.id) }
@@ -290,6 +287,9 @@ enum TweakCommands {
       print(Term.dim("  A supervised \(device.rawValue) honors: \(supervised.joined(separator: ", ")). An unsupervised one ignores those."))
     }
     print(Term.dim("  Siri and ChatGPT extensions apply without supervision."))
+    if off.contains(where: { $0.id == "mail" }) {
+      print(Term.dim("  Mail summaries turn off the ones you start yourself. Mail can still write them on its own."))
+    }
     print(Term.dim("  \(device.systemName) keeps the model files. Removing the profile turns the switches back on."))
     print(Term.dim("  Shared iPad ignores the supervised switches."))
     print(Term.dim("  Install it from Settings > General > VPN & Device Management."))

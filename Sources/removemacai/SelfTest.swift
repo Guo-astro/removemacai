@@ -254,13 +254,17 @@ func selfTest() -> Bool {
       && phoneRestrictions["allowImageWand"] as? Bool == false
       && phoneRestrictions["allowVisualIntelligenceSummary"] as? Bool == false
       && phoneRestrictions["allowDiagnosticSubmission"] == nil,
-      "an iPhone profile turns Writing Tools, Siri, Image Wand, and Visual Intelligence off")
+      "an iPhone profile turns Writing Tools, Siri, Image Wand, and Visual Intelligence summaries off")
     check(padRestrictions["allowWritingTools"] == nil
       && padRestrictions["allowGenmoji"] as? Bool == false
       && padRestrictions["allowImageWand"] as? Bool == false
       && padRestrictions["allowExternalIntelligenceIntegrations"] as? Bool == false
-      && padRestrictions["allowVisualIntelligenceSummary"] == nil,
-      "a kept iPad feature is left alone and iPad has no Visual Intelligence switch")
+      && padRestrictions["allowVisualIntelligenceSummary"] as? Bool == false,
+      "a kept iPad feature is left alone and iPad turns Visual Intelligence summaries off")
+    let phoneDescription = phone["PayloadDescription"] as? String ?? ""
+    check(phoneDescription.contains("Mail can still write them on its own")
+      && phoneDescription.contains("Visual Intelligence summaries"),
+      "the profile says Mail summaries are manual and names Visual Intelligence summaries")
   } catch {
     check(false, "the iPhone and iPad profiles build: \(error)")
   }
