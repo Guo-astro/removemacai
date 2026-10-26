@@ -263,8 +263,10 @@ func selfTest() -> Bool {
       "a kept iPad feature is left alone and iPad turns Visual Intelligence summaries off")
     let phoneDescription = phone["PayloadDescription"] as? String ?? ""
     check(phoneDescription.contains("Mail can still write them on its own")
-      && phoneDescription.contains("Visual Intelligence summaries"),
-      "the profile says Mail summaries are manual and names Visual Intelligence summaries")
+      && phoneDescription.contains("Visual Intelligence summaries")
+      && phoneDescription.contains("Shared iPad ignores them")
+      && !phoneDescription.contains("any device"),
+      "the profile names its Mail and Visual Intelligence limits and does not promise Siri AI on Shared iPad")
   } catch {
     check(false, "the iPhone and iPad profiles build: \(error)")
   }

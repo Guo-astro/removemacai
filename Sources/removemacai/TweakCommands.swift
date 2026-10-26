@@ -286,7 +286,7 @@ enum TweakCommands {
     if !supervised.isEmpty {
       print(Term.dim("  A supervised \(device.rawValue) honors: \(supervised.joined(separator: ", ")). An unsupervised one ignores those."))
     }
-    print(Term.dim("  Siri and ChatGPT extensions apply without supervision."))
+    print(Term.dim("  Siri applies without supervision. Siri AI and ChatGPT extensions do too, except Shared iPad ignores them."))
     if off.contains(where: { $0.id == "mail" }) {
       print(Term.dim("  Mail summaries turn off the ones you start yourself. Mail can still write them on its own."))
     }

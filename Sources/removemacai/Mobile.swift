@@ -85,7 +85,7 @@ enum Mobile {
     let description = """
     Turns off Apple Intelligence on this \(device.rawValue). Remove the profile and the switches come back. \
     \(device.systemName) does not let a profile delete the model files. \
-    Siri and ChatGPT extensions apply on any device. \(supervised) apply on a supervised device. Shared iPad ignores them.\(mailNote)
+    Siri applies without supervision. Siri AI and ChatGPT extensions apply without supervision, and Shared iPad ignores them. \(supervised) apply on a supervised device. Shared iPad ignores those too.\(mailNote)
     """
     let profile: [String: Any] = [
       "PayloadType": "Configuration",
