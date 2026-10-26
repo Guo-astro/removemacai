@@ -13,7 +13,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>other</key>
-			<string>%lld件の変更の準備ができました</string>
+			<string>準備できた変更%lld件</string>
 		</dict>
 	</dict>
 	<key>%lld features are kept on. Everything else is off and its models are gone.</key>
@@ -27,7 +27,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>other</key>
-			<string>%lld個の機能がオンのままです。それ以外はオフになり、モデルは削除されています。</string>
+			<string>%lld個の機能がオンのままです。ほかはすべてオフで、モデルも削除されています。</string>
 		</dict>
 	</dict>
 	<key>%lld items macOS protects stayed where they were.</key>
@@ -41,7 +41,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>other</key>
-			<string>macOSが保護する%lld個の項目は、そのまま残りました。</string>
+			<string>macOSが保護する%lld個の項目は元の位置に残りました。</string>
 		</dict>
 	</dict>
 	<key>%lld settings</key>
@@ -55,7 +55,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>other</key>
-			<string>%lld件の設定</string>
+			<string>%lld個の設定</string>
 		</dict>
 	</dict>
 	<key>%lld settings and Apple Intelligence off</key>
@@ -69,7 +69,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>other</key>
-			<string>%lld件の設定とApple Intelligenceオフ</string>
+			<string>%lld個の設定とApple Intelligenceオフ</string>
 		</dict>
 	</dict>
 	<key>%lld snapshots</key>
@@ -97,7 +97,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>other</key>
-			<string>残す%lld個の機能以外をすべてオフにする</string>
+			<string>残す%lld個の機能を除いてすべてオフにする</string>
 		</dict>
 	</dict>
 </dict>

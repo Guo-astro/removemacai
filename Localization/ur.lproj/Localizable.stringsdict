@@ -29,9 +29,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>one</key>
-			<string>%lld فیچر چالو رکھا ہے۔ باقی سب بند ہے اور اس کے ماڈل چلے گئے۔</string>
+			<string>%lld فیچر آن رکھا گیا ہے۔ باقی سب بند ہے اور اس کے ماڈلز ہٹا دیے گئے ہیں۔</string>
 			<key>other</key>
-			<string>%lld فیچرز چالو رکھے ہیں۔ باقی سب بند ہے اور ان کے ماڈل چلے گئے۔</string>
+			<string>%lld فیچرز آن رکھے گئے ہیں۔ باقی سب بند ہے اور اس کے ماڈلز ہٹا دیے گئے ہیں۔</string>
 		</dict>
 	</dict>
 	<key>%lld items macOS protects stayed where they were.</key>
@@ -45,9 +45,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>one</key>
-			<string>macOS کا محفوظ %lld آئٹم اپنی جگہ پر رہا۔</string>
+			<string>macOS کے محفوظ کردہ %lld آئٹم اپنی جگہ پر رہا۔</string>
 			<key>other</key>
-			<string>macOS کے محفوظ %lld آئٹمز اپنی جگہ پر رہے۔</string>
+			<string>macOS کے محفوظ کردہ %lld آئٹمز اپنی جگہ پر رہے۔</string>
 		</dict>
 	</dict>
 	<key>%lld settings</key>
@@ -93,9 +93,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>one</key>
-			<string>%lld snapshot</string>
+			<string>%lld اسنیپ شاٹ</string>
 			<key>other</key>
-			<string>%lld snapshots</string>
+			<string>%lld اسنیپ شاٹس</string>
 		</dict>
 	</dict>
 	<key>Turn off everything except %lld kept features</key>
@@ -109,9 +109,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
 			<key>one</key>
-			<string>%lld رکھے فیچر کے علاوہ سب بند کریں</string>
+			<string>%lld رکھے گئے فیچر کے علاوہ سب کچھ بند کریں</string>
 			<key>other</key>
-			<string>%lld رکھے فیچرز کے علاوہ سب بند کریں</string>
+			<string>%lld رکھے گئے فیچرز کے علاوہ سب کچھ بند کریں</string>
 		</dict>
 	</dict>
 </dict>

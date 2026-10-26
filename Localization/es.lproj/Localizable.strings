@@ -3,6 +3,8 @@
 
 "RemoveMacAI" = "RemoveMacAI";
 "About RemoveMacAI" = "Acerca de RemoveMacAI";
+"Check for Updates…" = "Buscar actualizaciones…";
+"Install Command Line Tool…" = "Instalar herramienta de línea de comandos…";
 "Reload" = "Recargar";
 "How RemoveMacAI Works" = "Cómo funciona RemoveMacAI";
 "RemoveMacAI on GitHub" = "RemoveMacAI en GitHub";
@@ -411,3 +413,26 @@
 "RemoveMacAI needs your password to change background items for all users." = "RemoveMacAI necesita tu contraseña para cambiar ítems en segundo plano de todos los usuarios.";
 "RemoveMacAI needs your password to move items only an administrator can change." = "RemoveMacAI necesita tu contraseña para trasladar ítems que solo un administrador puede cambiar.";
 "Turn off everything except 1 kept feature" = "Desactivar todo excepto 1 función conservada";
+"What it runs is gone, so it's left over from a deleted app." = "Lo que ejecuta ya no está, así que es un resto de una app eliminada.";
+"Move this leftover background item to the Trash?" = "¿Trasladar este ítem en segundo plano sobrante a la Papelera?";
+"%@ runs something that is no longer on this Mac. It goes to the Trash, so you can drag it back to restore it. Items marked All users ask for your password." = "%@ ejecuta algo que ya no está en este Mac. Va a la Papelera, para que puedas arrastrarlo de vuelta y restaurarlo. Los ítems marcados Todos los usuarios piden tu contraseña.";
+"RemoveMacAI needs your password to move background items only an administrator can change." = "RemoveMacAI necesita tu contraseña para trasladar ítems en segundo plano que solo un administrador puede cambiar.";
+"RemoveMacAI %@ is available." = "RemoveMacAI %@ está disponible.";
+"You have %@. Download the new version from GitHub and replace this app with it." = "Tienes %@. Descarga la versión nueva desde GitHub y sustituye esta app por ella.";
+"Download" = "Descargar";
+"Not Now" = "Ahora no";
+"RemoveMacAI is up to date." = "RemoveMacAI está actualizado.";
+"You have %@, the latest version." = "Tienes %@, la última versión.";
+"RemoveMacAI couldn't check for updates." = "RemoveMacAI no pudo buscar actualizaciones.";
+
+"The removemacai command is already installed." = "El comando removemacai ya está instalado.";
+"Open Terminal and run removemacai status." = "Abre Terminal y ejecuta removemacai status.";
+"Something else is already at %@." = "Ya hay otra cosa en %@.";
+"RemoveMacAI left it as it is. Remove it first, then try again." = "RemoveMacAI lo dejó como está. Quítalo primero y vuelve a intentarlo.";
+"Install the removemacai command?" = "¿Instalar el comando removemacai?";
+"This links %@ to this app, so you can run removemacai in Terminal. If you move or delete the app, the command stops working. macOS asks for your password." = "Esto enlaza %@ con esta app, para que puedas ejecutar removemacai en Terminal. Si mueves o eliminas la app, el comando deja de funcionar. macOS pide tu contraseña.";
+"Install" = "Instalar";
+"RemoveMacAI needs your password to install the removemacai command." = "RemoveMacAI necesita tu contraseña para instalar el comando removemacai.";
+"The removemacai command is installed." = "El comando removemacai está instalado.";
+"Open a new Terminal window and run removemacai status." = "Abre una ventana nueva de Terminal y ejecuta removemacai status.";
+"The removemacai command wasn't installed." = "El comando removemacai no se instaló.";

@@ -366,6 +366,7 @@ struct TweakRow: View {
 
 struct BackgroundView: View {
   @Environment(AppModel.self) private var model
+  @State private var trashing: BackgroundItem?
 
   var body: some View {
     Form {
@@ -374,27 +375,36 @@ struct BackgroundView: View {
           Text("No background items from other apps.").foregroundStyle(.secondary)
         }
         ForEach(model.background) { item in
-          Toggle(isOn: Binding(
-            get: { !model.backgroundOff.contains(item.id) },
-            set: { model.setBackground(item, off: !$0) }
-          )) {
-            VStack(alignment: .leading, spacing: 2) {
-              HStack(spacing: 6) {
-                Text(item.owner)
-                if item.system {
-                  Text("All users").font(.caption2.weight(.medium)).padding(.horizontal, 5).padding(.vertical, 1)
-                    .background(Capsule().fill(.quaternary))
+          HStack(spacing: 10) {
+            Toggle(isOn: Binding(
+              get: { !model.backgroundOff.contains(item.id) },
+              set: { model.setBackground(item, off: !$0) }
+            )) {
+              VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                  Text(item.owner)
+                  if item.system {
+                    Text("All users").font(.caption2.weight(.medium)).padding(.horizontal, 5).padding(.vertical, 1)
+                      .background(Capsule().fill(.quaternary))
+                  }
+                }
+                Text(item.label).font(.caption.monospaced()).foregroundStyle(.secondary)
+                Text(item.program).font(.caption2.monospaced()).foregroundStyle(.tertiary)
+                  .lineLimit(1).truncationMode(.middle)
+                if item.isLeftover {
+                  Label("What it runs is gone, so it's left over from a deleted app.", systemImage: "questionmark.folder").font(.caption).foregroundStyle(.secondary)
+                } else if item.warning != nil {
+                  Label(String(localized: "Not an updater. Turning it off can stop \(item.owner) working."), systemImage: "exclamationmark.triangle").font(.caption).foregroundStyle(.orange)
                 }
               }
-              Text(item.label).font(.caption.monospaced()).foregroundStyle(.secondary)
-              Text(item.program).font(.caption2.monospaced()).foregroundStyle(.tertiary)
-                .lineLimit(1).truncationMode(.middle)
-              if item.warning != nil {
-                Label(String(localized: "Not an updater. Turning it off can stop \(item.owner) working."), systemImage: "exclamationmark.triangle").font(.caption).foregroundStyle(.orange)
-              }
+            }
+            .toggleStyle(.switch)
+            if item.isLeftover {
+              Button { trashing = item } label: { Image(systemName: "minus.circle") }
+                .buttonStyle(.borderless)
+                .help("Move to Trash")
             }
           }
-          .toggleStyle(.switch)
           .disabled(model.backgroundBusy)
         }
       } header: {
@@ -406,6 +416,15 @@ struct BackgroundView: View {
     }
     .formStyle(.grouped)
     .navigationTitle("Background Items")
+    .confirmationDialog(
+      "Move this leftover background item to the Trash?",
+      isPresented: Binding(get: { trashing != nil }, set: { if !$0 { trashing = nil } }),
+      presenting: trashing
+    ) { item in
+      Button("Move to Trash") { model.trashBackground(item) }
+    } message: { item in
+      Text(String(localized: "\(item.label) runs something that is no longer on this Mac. It goes to the Trash, so you can drag it back to restore it. Items marked All users ask for your password."))
+    }
     .toolbar {
       ToolbarItem {
         Button { model.loadBackground() } label: { Label("Reload", systemImage: "arrow.clockwise") }
