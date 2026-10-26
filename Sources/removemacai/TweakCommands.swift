@@ -236,7 +236,12 @@ enum TweakCommands {
   // MARK: export
 
   /// Writes the profile for a preset or named tweaks, for deploying with an MDM.
-  static func export(path: String, ids: [String], preset: Preset?, keepAI: Set<String>, noAI: Bool) {
+  /// `device` writes an iPhone or iPad profile that only turns Apple Intelligence off.
+  static func export(path: String, ids: [String], preset: Preset?, keepAI: Set<String>, noAI: Bool, device: Mobile.Device? = nil) {
+    if let device {
+      exportMobile(path: path, device: device, ids: ids, preset: preset, keepAI: keepAI, noAI: noAI)
+      return
+    }
     var tweaks = Set<String>()
     for id in ids {
       guard let t = Tweaks.tweak(id) else { Term.fail("there is no tweak called \"\(id)\"") }
@@ -252,5 +257,38 @@ enum TweakCommands {
     print(Term.dim("  Apple Intelligence: \(noAI ? "left alone" : keepAI.isEmpty ? "off" : "off except \(keepAI.sorted().joined(separator: ", "))")"))
     print(Term.dim("  Tweaks: \(tweaks.isEmpty ? "none" : tweaks.sorted().joined(separator: ", "))"))
     print(Term.dim("  Per-user tweaks (Finder, Dock, typing) aren't in profiles; run removemacai on each Mac for those."))
+  }
+
+  /// An iPhone or iPad profile. Tweaks and model deletion are Mac-only.
+  private static func exportMobile(path: String, device: Mobile.Device, ids: [String], preset: Preset?, keepAI: Set<String>, noAI: Bool) {
+    if !ids.isEmpty || preset != nil {
+      Term.fail("an \(device.rawValue) profile only turns Apple Intelligence off. Leave out tweak names and --preset")
+    }
+    if noAI { Term.fail("--no-ai leaves Apple Intelligence alone, so an \(device.rawValue) profile would be empty") }
+    let names = Mobile.features(for: device).map(\.id).joined(separator: ", ")
+    for id in keepAI.sorted() {
+      guard let feature = Mobile.feature(id) else {
+        Term.fail("there is no \(device.rawValue) feature called \"\(id)\". Names: \(names)")
+      }
+      if feature.iPhoneOnly && device != .iPhone {
+        Term.fail("\(feature.title) is an iPhone feature. Leave it out of --keep on an iPad")
+      }
+    }
+    let off = Mobile.features(for: device).filter { !keepAI.contains($0.id) }
+    guard !off.isEmpty else { Term.fail("nothing would be turned off. Leave a feature out of --keep") }
+    do {
+      try Mobile.data(keeping: keepAI, device: device).write(to: URL(fileURLWithPath: path))
+    } catch { Term.fail("could not write \(path): \(error)") }
+    print(Term.green("✓") + " Wrote \(path) for \(device.rawValue) (\(device.systemName))")
+    print(Term.dim("  Off: \(off.map(\.title).joined(separator: ", "))"))
+    if !keepAI.isEmpty { print(Term.dim("  Kept on: \(keepAI.sorted().joined(separator: ", "))")) }
+    let supervised = off.filter(\.supervised).map(\.title)
+    if !supervised.isEmpty {
+      print(Term.dim("  A supervised \(device.rawValue) honors: \(supervised.joined(separator: ", ")). An unsupervised one ignores those."))
+    }
+    print(Term.dim("  Siri and ChatGPT extensions apply without supervision."))
+    print(Term.dim("  \(device.systemName) keeps the model files. Removing the profile turns the switches back on."))
+    print(Term.dim("  Shared iPad ignores the supervised switches."))
+    print(Term.dim("  Install it from Settings > General > VPN & Device Management."))
   }
 }
