@@ -316,6 +316,19 @@ final class AppModel {
 
   // MARK: background items
 
+  func trashBackground(_ item: BackgroundItem) {
+    backgroundBusy = true
+    Task.detached(priority: .userInitiated) {
+      let problems = BackgroundItems.trash([item])
+      await MainActor.run {
+        self.backgroundBusy = false
+        self.loadBackground()
+        self.journal = Engine.loadJournal()
+        if !problems.isEmpty { self.run = .finished(problems: problems, freed: nil) }
+      }
+    }
+  }
+
   func setBackground(_ item: BackgroundItem, off: Bool) {
     backgroundBusy = true
     Task.detached(priority: .userInitiated) {

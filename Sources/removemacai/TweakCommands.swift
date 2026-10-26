@@ -136,9 +136,12 @@ enum TweakCommands {
   // MARK: background items
 
   static func background(_ args: [String], yes: Bool) -> Bool {
+    if let action = args.first, action != "off" && action != "on" {
+      Term.fail("unknown action \"\(action)\", use off or on")
+    }
     let items = BackgroundItems.scan()
     let labels = BackgroundItems.disabledLabels()
-    guard let action = args.first, action == "off" || action == "on" else {
+    guard let action = args.first else {
       Commands.header()
       if items.isEmpty {
         print("No background items from other apps.")
@@ -150,7 +153,7 @@ enum TweakCommands {
         let state = off ? Term.dim(Term.pad("off", 5)) : Term.green(Term.pad("on", 5))
         let kind = item.isUpdater ? Term.dim("updater") : Term.yellow("helper")
         print("  " + Term.pad(item.label, 48) + Term.pad(item.owner, 22) + state + kind
-          + (item.system ? Term.dim("  (all users)") : ""))
+          + (item.system ? Term.dim("  (all users)") : "") + (item.isLeftover ? Term.dim("  (left over)") : ""))
       }
       print()
       print(Term.dim("Turning off a helper can stop its app working, for example a VPN or Docker."))

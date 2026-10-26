@@ -51,7 +51,7 @@ This runs the command-line version from a temporary folder and installs nothing.
 brew install omlahore/tap/removemacai
 ```
 
-The app and the command line are the same program and share the same undo history.
+The app and the command line are the same program and share the same undo history. If you installed the app from the zip, choose RemoveMacAI > Install Command Line Tool… to get the `removemacai` command too.
 
 ## What it does
 
@@ -130,7 +130,7 @@ It holds the Apple Intelligence restrictions, the download block for removed mod
 - **Models** are removed through Apple's asset service, and the profile points their downloads at a closed local port so macOS doesn't fetch them again.
 - **Storage** cleanup moves files to the Trash, so they aren't gone until you empty it. Unavailable simulators and Time Machine local snapshots are deleted right away by `simctl` and `tmutil`.
 
-System Integrity Protection stays on, nothing under `/System` is modified, and RemoveMacAI makes no network requests and collects no data.
+System Integrity Protection stays on, nothing under `/System` is modified, and RemoveMacAI collects no data. It makes no network requests, except to GitHub when you choose Check for Updates… in the app.
 
 ## What it doesn't do
 

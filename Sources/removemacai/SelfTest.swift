@@ -42,6 +42,12 @@ func selfTest() -> Bool {
   check(unknownCommand.status == 1 && unknownCommandOutput.contains("error: unknown command \"stauts\"")
     && unknownCommandOutput.contains("Did you mean \"status\"?"),
     "an unknown command fails naming the typo instead of printing bare usage")
+  let unknownAction = Shell.run(executable, ["background", "of"])
+  let unknownActionOutput = unknownAction.output.replacingOccurrences(
+    of: #"\x1B\[[0-9;]*m"#, with: "", options: .regularExpression)
+  check(unknownAction.status == 1
+    && unknownActionOutput.trimmingCharacters(in: .whitespacesAndNewlines) == "error: unknown action \"of\", use off or on",
+    "background fails on an unknown action instead of listing items")
 
   check(Set(Catalog.setsToRemove(keeping: [])) == Set(Catalog.availableModelSets.map(\.name)),
     "off removes every model set this macOS has")
@@ -314,12 +320,54 @@ func selfTest() -> Bool {
   let helper = BackgroundItem(label: "dev.orbstack.OrbStack.privhelper", plist: "",
     program: "/Library/PrivilegedHelperTools/dev.orbstack.OrbStack.privhelper", system: true)
   check(script.owner == "sync.sh" && helper.owner == "OrbStack", "background items are named after what they run")
+  let goneApp = BackgroundItem(label: "com.example.gone", plist: "", program: "/Applications/Gone-\(UUID().uuidString).app/Contents/MacOS/helper", system: false)
+  let goneScript = BackgroundItem(label: "com.example.gone-script", plist: "", program: "/bin/bash",
+    arguments: ["/bin/bash", "/nonexistent-\(UUID().uuidString)/sync.sh"], system: false)
+  let present = BackgroundItem(label: "com.example.present", plist: "", program: "/bin/bash",
+    arguments: ["/bin/bash", "/bin/sh"], system: false)
+  let bare = BackgroundItem(label: "com.example.bare", plist: "", program: "helper", system: false)
+  check(goneApp.isLeftover && goneScript.isLeftover && !present.isLeftover && !bare.isLeftover,
+    "a background item is left over only when what it runs is gone")
+  let inline = BackgroundItem(label: "com.example.inline", plist: "", program: "/bin/bash",
+    arguments: ["/bin/bash", "-c", "echo ok", "/nonexistent-\(UUID().uuidString)"], system: false)
+  let inlineScript = BackgroundItem(label: "com.example.inline-script", plist: "", program: "/bin/sh",
+    arguments: ["/bin/sh", "-c", "/bin/sh --version"], system: false)
+  let optioned = BackgroundItem(label: "com.example.optioned", plist: "", program: "/bin/zsh",
+    arguments: ["/bin/zsh", "-l", "/nonexistent-\(UUID().uuidString)/sync.sh"], system: false)
+  check(!inline.isLeftover && !inlineScript.isLeftover && optioned.isLeftover,
+    "a command run with -c is never judged left over, and options before a script are skipped")
+  let locked = FileManager.default.temporaryDirectory.appendingPathComponent("removemacai-locked-\(UUID().uuidString)")
+  try? FileManager.default.createDirectory(at: locked, withIntermediateDirectories: false, attributes: [.posixPermissions: 0o000])
+  defer { try? FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: locked.path); try? FileManager.default.removeItem(at: locked) }
+  check(!BackgroundItem.confirmedMissing(locked.appendingPathComponent("helper").path)
+    && BackgroundItem.confirmedMissing("/nonexistent-\(UUID().uuidString)/helper"),
+    "a path RemoveMacAI can't look into doesn't count as missing")
 
   let ranAll = Shell.run("/bin/sh", ["-c", Shell.adminScript(["false", "echo second"])])
   check(!ranAll.ok && ranAll.output.contains("second"), "one failed administrator step doesn't skip the rest")
   let exited = Shell.run("/bin/sh", ["-c", Shell.adminScript(["exit 3", "echo after-exit"])])
   check(!exited.ok && exited.output.contains("after-exit"), "a step that exits doesn't stop the rest")
+  let toolFolder = FileManager.default.temporaryDirectory.appendingPathComponent("removemacai-cli-\(UUID().uuidString)")
+  defer { try? FileManager.default.removeItem(at: toolFolder) }
+  let toolLink = toolFolder.appendingPathComponent("bin/removemacai").path
+  let binary = "/Applications/Remove Mac AI's.app/Contents/MacOS/RemoveMacAI"
+  let linked = Shell.run("/bin/sh", ["-c", Shell.adminScript(CommandLineTool.commands(linking: binary, at: toolLink))])
+  let relinked = Shell.run("/bin/sh", ["-c", Shell.adminScript(CommandLineTool.commands(linking: binary, at: toolLink))])
+  check(linked.ok && relinked.ok && (try? FileManager.default.destinationOfSymbolicLink(atPath: toolLink)) == binary,
+    "the command line tool links to the app, even from a path with spaces and quotes")
+  let toolFile = toolFolder.appendingPathComponent("bin/other").path
+  FileManager.default.createFile(atPath: toolFile, contents: Data("keep".utf8))
+  let refused = Shell.run("/bin/sh", ["-c", Shell.adminScript(CommandLineTool.commands(linking: binary, at: toolFile))])
+  check(!refused.ok && refused.output.contains("isn't a link") && (try? String(contentsOfFile: toolFile, encoding: .utf8)) == "keep",
+    "the command line tool never replaces a file that isn't a link")
   check(Shell.run("/bin/sh", ["-c", Shell.adminScript(["true", "true"])]).ok, "administrator steps succeed together")
+  check(Updates.isNewer("1.2.0", than: "1.2.0-beta.1") && !Updates.isNewer("1.1.4", than: "1.2.0-beta.1")
+    && Updates.isNewer("1.2.0-beta.10", than: "1.2.0-beta.9") && !Updates.isNewer("1.2.0-beta.1", than: "1.2.0")
+    && Updates.isNewer("1.10.0", than: "1.9.9") && !Updates.isNewer("1.1.4", than: "1.1.4"),
+    "update checks treat a beta as older than its release and compare numbers as numbers")
+  check(Updates.isVersion("1.2.0") && Updates.isVersion("1.2.0-beta.1") && !Updates.isVersion("")
+    && !Updates.isVersion("latest") && !Updates.isVersion("1.2.") && !Updates.isNewer("", than: "1.2.0"),
+    "an update check only accepts version numbers, and an empty one can't crash it")
   check(Term.pad("abc", 5) == "abc  " && Term.pad("abcdef", 5) == "abcdef ", "columns never run together")
   check(Term.colorEnabled(env: [:], tty: true) && !Term.colorEnabled(env: [:], tty: false),
     "color follows the terminal when neither NO_COLOR nor CLICOLOR_FORCE is set")
