@@ -153,7 +153,7 @@ enum TweakCommands {
         let state = off ? Term.dim(Term.pad("off", 5)) : Term.green(Term.pad("on", 5))
         let kind = item.isUpdater ? Term.dim("updater") : Term.yellow("helper")
         print("  " + Term.pad(item.label, 48) + Term.pad(item.owner, 22) + state + kind
-          + (item.system ? Term.dim("  (all users)") : ""))
+          + (item.system ? Term.dim("  (all users)") : "") + (item.isLeftover ? Term.dim("  (left over)") : ""))
       }
       print()
       print(Term.dim("Turning off a helper can stop its app working, for example a VPN or Docker."))
