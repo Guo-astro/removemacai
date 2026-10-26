@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>%lld changes ready</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld cambio listo</string>
+			<key>other</key>
+			<string>%lld cambios listos</string>
+		</dict>
+	</dict>
+	<key>%lld features are kept on. Everything else is off and its models are gone.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld función se mantiene activada. Todo lo demás está desactivado y sus modelos han desaparecido.</string>
+			<key>other</key>
+			<string>%lld funciones se mantienen activadas. Todo lo demás está desactivado y sus modelos han desaparecido.</string>
+		</dict>
+	</dict>
+	<key>%lld items macOS protects stayed where they were.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld ítem protegido por macOS se quedó donde estaba.</string>
+			<key>other</key>
+			<string>%lld ítems protegidos por macOS se quedaron donde estaban.</string>
+		</dict>
+	</dict>
+	<key>%lld settings</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld ajuste</string>
+			<key>other</key>
+			<string>%lld ajustes</string>
+		</dict>
+	</dict>
+	<key>%lld settings and Apple Intelligence off</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld ajuste y Apple Intelligence desactivado</string>
+			<key>other</key>
+			<string>%lld ajustes y Apple Intelligence desactivado</string>
+		</dict>
+	</dict>
+	<key>%lld snapshots</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld instantánea</string>
+			<key>other</key>
+			<string>%lld instantáneas</string>
+		</dict>
+	</dict>
+	<key>Turn off everything except %lld kept features</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Desactivar todo excepto %lld función conservada</string>
+			<key>other</key>
+			<string>Desactivar todo excepto %lld funciones conservadas</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

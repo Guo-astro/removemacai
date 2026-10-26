@@ -13,6 +13,11 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
+      - name: Localization
+        run: |
+          for lang in ru de fr es it pt-BR ja ko zh-Hans hi ur; do
+            python3 tools/check-localization.py "$lang"
+          done
       - name: Build
         run: swift build -c release --arch arm64 -Xswiftc -warnings-as-errors
       - name: Self-test
