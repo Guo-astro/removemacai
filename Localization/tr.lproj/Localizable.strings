@@ -49,7 +49,7 @@
 "Show System Settings" = "Sistem Ayarları'nı Göster";
 "All done" = "Hepsi tamam";
 "Finished, with a few problems" = "Bitti, birkaç sorunla birlikte";
-"Deleted %@ of Apple Intelligence models. macOS clears the files on its own schedule, so Storage settings may show the old size for a while." = "%@ Apple Intelligence modeli silindi. macOS dosyaları kendi zamanlamasıyla temizler, bu yüzden Depolama ayarları bir süre eski boyutu gösterebilir.";
+"Deleted %@ of Apple Intelligence models. macOS clears the files on its own schedule, so Storage settings may show the old size for a while." = "%@ boyutunda Apple Intelligence modeli silindi. macOS dosyaları kendi zamanlamasıyla temizler, bu yüzden Depolama ayarları bir süre eski boyutu gösterebilir.";
 "I make RemoveMacAI by myself in my spare time. If it was useful to you, you can sponsor it on GitHub." = "RemoveMacAI'ı boş zamanlarımda tek başıma geliştiriyorum. İşinize yaradıysa GitHub'da sponsor olabilirsiniz.";
 "Sponsor on GitHub" = "GitHub'da Sponsor Ol";
 "Changed your mind? Undo in the sidebar puts everything back." = "Fikrinizi mi değiştirdiniz? Kenar çubuğundaki Geri Al her şeyi eski haline getirir.";
@@ -61,7 +61,7 @@
 "Overview" = "Genel Bakış";
 "Apple Intelligence is off" = "Apple Intelligence kapalı";
 "Apple Intelligence is on" = "Apple Intelligence açık";
-"%@ of models out of %@ of storage" = "%2$@ depolama alanının %1$@ kadarı modeller";
+"%@ of models out of %@ of storage" = "Modeller, %2$@ depolama alanının %1$@ kadarını kaplıyor";
 "Delete the Leftover Models…" = "Kalan Modelleri Sil…";
 "Change What's Kept On" = "Açık Kalacakları Değiştir";
 "Turn Off with Recommended Settings…" = "Önerilen Ayarlarla Kapat…";
@@ -186,7 +186,7 @@
 "Not checked" = "Denetlenmedi";
 "A preset adds to what's already applied and changes nothing until you review it." = "Hazır bir ayar, zaten uygulanmış olanlara eklenir ve siz gözden geçirene kadar hiçbir şeyi değiştirmez.";
 "Checking how much space its models take…" = "Modellerinin ne kadar yer kapladığı denetleniyor…";
-"%@ of models are still on disk. macOS won't download more." = "%@ model hâlâ diskte. macOS daha fazlasını indirmeyecek.";
+"%@ of models are still on disk. macOS won't download more." = "Modellerin %@ kadarı hâlâ diskte. macOS daha fazlasını indirmeyecek.";
 "1 feature is kept on. Everything else is off and its models are gone." = "1 özellik açık tutuluyor. Geri kalan her şey kapalı ve modelleri silindi.";
 "Its models are gone and macOS won't download them again." = "Modelleri silindi ve macOS onları yeniden indirmeyecek.";
 "Its models take %@ on this Mac, whether you use them or not." = "Modelleri, kullansanız da kullanmasanız da bu Mac'te %@ yer kaplıyor.";
@@ -211,10 +211,10 @@
 "Notification summaries" = "Bildirim özetleri";
 "Messages summaries" = "Mesajlar özetleri";
 "Safari summaries" = "Safari özetleri";
-"Notes transcription summaries" = "Notlar transkripsiyon özetleri";
+"Notes transcription summaries" = "Notlar'da döküm özetleri";
 "Inline text predictions" = "Satır içi metin tahminleri";
 "Spatial Photos" = "Uzamsal Fotoğraflar";
-"Photos Clean Up" = "Fotoğraflar'da Temizle";
+"Photos Clean Up" = "Fotoğraflar'da Düzelt";
 "Xcode predictive code completion" = "Xcode tahmine dayalı kod tamamlama";
 "The voice assistant. Keep it and basic Siri still works without the big models." = "Sesli asistan. Açık tutarsanız temel Siri büyük modeller olmadan da çalışır.";
 "Lets Siri and Writing Tools hand requests to ChatGPT." = "Siri'nin ve Yazma Araçları'nın istekleri ChatGPT'ye iletmesini sağlar.";
@@ -225,7 +225,7 @@
 "Condenses a stack of notifications into one line." = "Bir yığın bildirimi tek satıra indirir.";
 "Summarizes long conversations in Messages." = "Mesajlar'daki uzun konuşmaları özetler.";
 "Summarizes web pages in Safari." = "Safari'de web sayfalarını özetler.";
-"Summarizes recordings and transcripts in Notes." = "Notlar'daki kayıtları ve transkriptleri özetler.";
+"Summarizes recordings and transcripts in Notes." = "Notlar'daki kayıtları ve dökümleri özetler.";
 "Suggests the rest of a word or sentence as you type." = "Yazarken bir kelimenin veya cümlenin devamını önerir.";
 "Turns flat photos into 3D spatial scenes." = "Düz fotoğrafları 3B uzamsal sahnelere dönüştürür.";
 "Removes objects from photos in Photos." = "Fotoğraflar'da fotoğraflardan nesneleri kaldırır.";
@@ -237,7 +237,7 @@
 "Apple Intelligence foundation models" = "Apple Intelligence temel modelleri";
 "Image and Genmoji models" = "Görüntü ve Genmoji modelleri";
 "Spatial Photos models" = "Uzamsal Fotoğraflar modelleri";
-"Photos Clean Up models" = "Fotoğraflar Temizle modelleri";
+"Photos Clean Up models" = "Fotoğraflar Düzelt modelleri";
 "Xcode code completion models" = "Xcode kod tamamlama modelleri";
 "Privacy" = "Gizlilik";
 "Annoyances" = "Can sıkıcı şeyler";
@@ -298,7 +298,7 @@
 "Show file extensions" = "Dosya uzantılarını göster";
 "Shows the full name of every file, so a file pretending to be a document is easier to spot." = "Her dosyanın tam adını gösterir, böylece belge kılığına girmiş bir dosyayı fark etmek kolaylaşır.";
 "Show hidden files" = "Gizli dosyaları göster";
-"Shows the files macOS hides, such as .gitignore and .zshrc. Press Command-Shift-Period to toggle it too." = "macOS'un gizlediği .gitignore ve .zshrc gibi dosyaları gösterir. Command-Shift-Nokta ile de açıp kapatabilirsiniz.";
+"Shows the files macOS hides, such as .gitignore and .zshrc. Press Command-Shift-Period to toggle it too." = "macOS'un gizlediği .gitignore ve .zshrc gibi dosyaları gösterir. Shift-Komut-Nokta ile de açıp kapatabilirsiniz.";
 "Show the path bar" = "Yol çubuğunu göster";
 "Shows where the current folder is at the bottom of every Finder window." = "Her Finder penceresinin altında geçerli klasörün nerede olduğunu gösterir.";
 "Show the status bar" = "Durum çubuğunu göster";
@@ -391,7 +391,7 @@
 "Privacy & Security" = "Gizlilik ve Güvenlik";
 "I'll choose myself" = "Kendim seçeceğim";
 "Start with nothing selected and pick from the sidebar." = "Hiçbir şey seçili olmadan başlayın ve kenar çubuğundan seçin.";
-" and %@ of models" = " ve %@ model";
+" and %@ of models" = " ve %@ boyutunda model";
 "Nothing is selected for you" = "Sizin yerinize hiçbir şey seçilmez";
 "Choose" = "Seçin";
 "Pick a preset or switch single things off. Each one says what it does." = "Hazır bir ayar seçin veya tek tek şeyleri kapatın. Her biri ne yaptığını söyler.";
