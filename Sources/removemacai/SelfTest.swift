@@ -230,6 +230,46 @@ func selfTest() -> Bool {
   } catch {
     check(false, "the profile builds: \(error)")
   }
+
+  do {
+    check(Mobile.Device(argument: "ios") == .iPhone && Mobile.Device(argument: "ipados") == .iPad
+      && Mobile.Device(argument: "phone") == nil,
+      "iphone and ipad profile targets accept the OS names")
+    check(Set(Mobile.features.map(\.id)).count == Mobile.features.count, "iPhone and iPad feature names are unique")
+    let phone = try PropertyListSerialization.propertyList(from: Mobile.data(keeping: [], device: .iPhone), format: nil) as! [String: Any]
+    let pad = try PropertyListSerialization.propertyList(from: Mobile.data(keeping: ["writing-tools"], device: .iPad), format: nil) as! [String: Any]
+    check(phone["PayloadScope"] == nil && pad["PayloadScope"] == nil
+      && phone["PayloadRemovalDisallowed"] as? Bool == false,
+      "an iPhone or iPad profile is removable and is not a Mac system profile")
+    let phonePayloads = phone["PayloadContent"] as! [[String: Any]]
+    let padPayloads = pad["PayloadContent"] as! [[String: Any]]
+    let phoneRestrictions = phonePayloads[0]
+    let padRestrictions = padPayloads[0]
+    check(phonePayloads.count == 1 && phonePayloads[0]["PayloadType"] as? String == "com.apple.applicationaccess"
+      && padPayloads.count == 1,
+      "an iPhone profile carries restrictions only, with no Mac preference payloads")
+    check(phoneRestrictions["allowWritingTools"] as? Bool == false
+      && phoneRestrictions["allowAssistant"] as? Bool == false
+      && phoneRestrictions["allowSiriAI"] as? Bool == false
+      && phoneRestrictions["allowImageWand"] as? Bool == false
+      && phoneRestrictions["allowVisualIntelligenceSummary"] as? Bool == false
+      && phoneRestrictions["allowDiagnosticSubmission"] == nil,
+      "an iPhone profile turns Writing Tools, Siri, Image Wand, and Visual Intelligence summaries off")
+    check(padRestrictions["allowWritingTools"] == nil
+      && padRestrictions["allowGenmoji"] as? Bool == false
+      && padRestrictions["allowImageWand"] as? Bool == false
+      && padRestrictions["allowExternalIntelligenceIntegrations"] as? Bool == false
+      && padRestrictions["allowVisualIntelligenceSummary"] as? Bool == false,
+      "a kept iPad feature is left alone and iPad turns Visual Intelligence summaries off")
+    let phoneDescription = phone["PayloadDescription"] as? String ?? ""
+    check(phoneDescription.contains("Mail can still write them on its own")
+      && phoneDescription.contains("Visual Intelligence summaries")
+      && phoneDescription.contains("Shared iPad ignores them")
+      && !phoneDescription.contains("any device"),
+      "the profile names its Mail and Visual Intelligence limits and does not promise Siri AI on Shared iPad")
+  } catch {
+    check(false, "the iPhone and iPad profiles build: \(error)")
+  }
   // The debloater catalog.
   check(Set(Tweaks.all.map(\.id)).count == Tweaks.all.count, "tweak names are unique")
   let changeKeys = Tweaks.all.flatMap { $0.changes.map(\.key) }

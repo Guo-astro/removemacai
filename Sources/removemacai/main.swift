@@ -26,6 +26,8 @@ let usage = """
     removemacai clean [<names>]           show space to get back, move some to the Trash
     removemacai export <file.mobileconfig> [--preset p] [<names>] [--keep a,b] [--no-ai]
                                           write the profile for an MDM
+        --for iphone|ipad                 write an iPhone (ios) or iPad (ipados) profile instead.
+                                          It turns Apple Intelligence off. Models stay on the device.
 
     removemacai revert          undo everything RemoveMacAI changed
     removemacai app             open the RemoveMacAI app
@@ -80,6 +82,14 @@ func unknownCommandMessage(_ name: String) -> String {
   if let hint = suggestCommand(for: name) { message += ". Did you mean \"\(hint)\"?" }
   return message
 }
+func mobileDeviceOption() -> Mobile.Device? {
+  guard let name = option("--for") else { return nil }
+  guard let device = Mobile.Device(argument: name) else {
+    Term.fail("unknown device \"\(name)\". Use iphone, ios, ipad, or ipados")
+  }
+  return device
+}
+
 func presetOption() -> Preset? {
   guard let name = option("--preset") else { return nil }
   guard let preset = Preset(rawValue: name) else {
@@ -159,9 +169,10 @@ case "export":
   let preset = presetOption()
   let keep = Set((option("--keep") ?? "").split(separator: ",").map { String($0).trimmed }.filter { !$0.isEmpty })
   let noAI = flag("--no-ai")
+  let device = mobileDeviceOption()
   if let bad = unknownOption(in: args) { Term.fail("unknown option \(bad)") }
   guard let path = args.first else { Term.fail("name the file to write, for example: removemacai export RemoveMacAI.mobileconfig") }
-  TweakCommands.export(path: path, ids: Array(args.dropFirst()), preset: preset, keepAI: keep, noAI: noAI)
+  TweakCommands.export(path: path, ids: Array(args.dropFirst()), preset: preset, keepAI: keep, noAI: noAI, device: device)
 case "selftest":
   exit(selfTest() ? 0 : 1)
 case "--version", "-v", "version":
