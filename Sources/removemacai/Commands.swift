@@ -54,7 +54,8 @@ enum Commands {
     for set in Catalog.availableModelSets {
       let bytes = Models.bytes(set.name)
       readings[set.name] = bytes
-      print("  " + Term.pad(set.title, 40) + modelSize(bytes))
+      let leftover = bytes == 0 && Models.present(set.name)
+      print("  " + Term.pad(set.title, 40) + (leftover ? Term.yellow("files left in its folder") : modelSize(bytes)))
     }
     let total = Models.total(Catalog.availableModelSets.map(\.name), read: { readings[$0] })
     print("  " + Term.pad("Total", 40) + (total.map { Term.bold(Term.size($0)) } ?? Term.yellow("unknown")))

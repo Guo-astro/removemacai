@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `removemacai status` says when a model set's folder still holds files, instead of showing none because Apple's asset service reports the set as gone (#45).
 - Background Items marks items left over from a deleted app, whose program is no longer on the Mac, and has a minus button to stop one and move it to the Trash, from where it can be dragged back. `removemacai background` marks them as left over too (#66).
 - The app has a Check for Updates… item in the RemoveMacAI menu. It asks GitHub for the latest release and offers to open its download page. It only checks when you choose it, so RemoveMacAI still makes no network requests on its own (#44).
 - The app has an Install Command Line Tool… item in the RemoveMacAI menu. It asks first, then links `/usr/local/bin/removemacai` to the app, so the app from the zip gets the `removemacai` command too. It never replaces a file there that isn't a link (#60).
